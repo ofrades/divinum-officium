@@ -13,7 +13,7 @@ Suffr=Maria3;Ecclesiae,Papa;;
 v. Do not be afraid, Zachary, your prayer has been heard, and your wife~
 Elizabeth shall bear you a son, and you shall call his name John; and he shall~
 be great before the Lord, and shall be filled with the Holy Spirit even from his~
-mother’s womb; and may will rejoice at his birth.
+mother’s womb; and many will rejoice at his birth.
 !Ps 20:2
 O Lord, in Your strength the king is glad; in Your victory how greatly he~
 rejoices.
@@ -21,7 +21,7 @@ rejoices.
 v. Do not be afraid, Zachary, your prayer has been heard, and your wife~
 Elizabeth shall bear you a son, and you shall call his name John; and he shall~
 be great before the Lord, and shall be filled with the Holy Spirit even from his~
-mother’s womb; and may will rejoice at his birth.
+mother’s womb; and many will rejoice at his birth.
 
 [Oratio]
 Grant, we beseech You, almighty God, that Your household may walk in the way of~
@@ -70,9 +70,9 @@ You crowned him with glory and honor. You have given him rule over the works of~
 Your hands, O Lord.
 
 [Secreta]
-Make holy the sacrificial gifts we offer, O Lord, and by the new birth of Your~
-only-begotten Son, cleanse us from the stains of our sins.
-$Per eundem
+Sanctify, O Lord, the gifts offered to You, and, by the intercession of Blessed~
+John the Baptist, purify us by them from the stains of our sins.
+$Per Dominum
 
 [Communio]
 !Ps 20:6

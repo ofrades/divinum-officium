@@ -26,7 +26,7 @@ R. Revistiose el Señor de fortaleza, y ciñose de ella.
 
 [Day0 Laudes2]
 !1 Cor 9, 24
-v. Brothers,  Know you not that they that run in the race, all run indeed, but one receiveth the prize? So run that you may obtain.
+v. ¿No sabéis que en el estadio todos los corredores cubren la carrera, aunque uno solo se lleva el premio? Pues corred así: para ganar.
 $Deo gratias
 
 [Hymnus Day0 Laudes2]
@@ -77,8 +77,8 @@ ahora y por todos los siglos.
 Amén.
 
 [Day02 Versum 2]
-V. Lord, thou hast been our refuge.
-R. From generation to generation.
+V. Señor, Tú has sido nuestro refugio.
+R. De generación en generación.
 
 [Day0 Vespera]
 !2 Cor 1, 3-4
@@ -524,24 +524,25 @@ Amén.
 
 [Day6 Vespera]
 !Rom 11, 33
-v. ¡Oh profundidad de los tesoros de la sabiduría y de la ciencia de Dios: cuán incomprensibles son sus juicios e inescrutables sus caminos!
+v. ¡Qué abismo de riqueza la sabiduría y ciencia de Dios! ¡Qué insondables sus juicios y qué inescrutables sus caminos!
+
 $Deo gratias
 
 [Hymnus Day6 Vespera]
-v. Oh luz increada, santísima Trinidad 
-y Unidad soberana; al desaparecer 
-el radiante sol, infunde tu luz 
-en nuestros corazones.
+v. Ya declina el sol ardiente; 
+Tú, Dios Uno, luz perenne, 
+Trinidad divina, infunde 
+tu amor en nuestros pechos.
 _
-A ti, al amanecer ofrecemos nuestros cánticos 
-de loores; a ti dirigimos nuestras preces 
-al caer el día; concede que te alabemos 
-en compañía de tus escogidos.
+Mañana y tarde te rogamos, 
+con himnos de alabanzas, que permitas 
+te alabemos suplicantes 
+en compañía de los bienaventurados.
 _
-A ti, Padre, y juntamente al Hijo, 
-e igualmente a ti, oh Santo Espíritu, 
-como fue debida la gloria desde toda la eternidad, 
-así sea dada por todos los siglos. 
+Gloria sea dada al Padre, y al Hijo, 
+y a ti, ¡oh Espíritu Santo!, 
+incesantemente, como hasta ahora, 
+por todos los siglos. 
 Amén.
 
 [HymnusM Day6 Vespera]
@@ -611,8 +612,8 @@ Alumbra, Señor, * a los que están sentados en las tinieblas y sombra de la mue
 Dios auxilia * a Israel, su siervo, como lo había prometido a Abrahán y su descendencia por siempre.
 
 [Adv Laudes]
-!Isa 2, 3
-v. Come and let us go up to the mountain of the Lord, and to the house of the God of Jacob, and he will teach us his ways, and we will walk in his paths: for the law shall come forth from Sion, and the word of the Lord from Jerusalem.
+!Is 2, 3
+v. Venid, subamos al monte del Señor, a la casa del Dios de Jacob. Él nos instruirá en sus caminos y marcharemos por sus sendas; porque de Sión saldrá la ley, la palabra del Señor de Jerusalén.
 $Deo gratias
 
 [Hymnus Adv Laudes]
@@ -721,8 +722,8 @@ No temáis, * dentro de cuatro días vendrá a vosotros el Señor.
 Se ha cumplido * todo lo que el ángel dijo de la Virgen María.
 
 [Quad Laudes]
-!Isa 58, 1
-v. Cry, cease not, lift up thy voice like a trumpet, and show my people their wicked doings, and the house of Jacob their sins.
+!Is 58, 1
+v. Grita a pleno pulmón, no te contengas; alza la voz como una trompeta, denuncia a mi pueblo sus delitos, a la casa de Jacob sus pecados.
 $Deo gratias
 
 [Hymnus Quad Laudes]
@@ -793,8 +794,8 @@ V. Dios ordenó a sus Ángeles.
 R. Que te guardasen en todos tus caminos.
 
 [Quad5 Laudes]
-!Jer 11:19
-v. Come, let us put wood on his bread, and cut him off from the land of the living, and let his name be remembered no more.
+!Jer 11, 19
+v. Talemos el árbol en su lozanía, arranquémoslo de la tierra de los vivos, que jamás se pronuncie su nombre.
 $Deo gratias
 
 [Hymnus Quad5 Laudes]
@@ -986,117 +987,117 @@ V. Quédate con nosotros, Señor, aleluya.
 R. Porque se hace de noche, aleluya.
 
 [Suffragium1]
-Ant. May the Blessed Virgin Mary, Mother of God, and all the Saints intercede for us with the Lord.
+Ant. Intercedan por nosotros la Bienaventurada Virgen María, Madre de Dios, y todos los Santos ante el Señor.
 _
-V. The Lord hath made his holy one wonderful: 
-R. The Lord will hear me when I cry unto him. 
+V. El Señor ha hecho admirable a su santo.
+R. El Señor me oirá siempre que a El clame.
 _
-!Prayer
-!At the letter N., the name of the Titular of the local church is said, if the title is not a divine person or a mystery of the Lord, and when the Office or a Commemoration was not already said of the Saint, and when the name is not already in the prayer. The names of the holy Angels and of St. John the Baptist, if they are titulars, are said before the name of St. Joseph. In all these cases, the words "blessed N." are omitted.
+!Oración
+!En la letra N. se dice el nombre del Titular de la iglesia, salvo si éste es una persona divina, un misterio del Señor, o si se ha dicho ya el Oficio o Conmemoración a nombre del Santo, o si el nombre estuviera ya en la oración. Si el titular fuera uno de los Santos Ángeles o S. Juan Bautista, su nombre se dice tras el de S. José. En cualquiera de estos casos, se omiten las palabras "San N."
 $Oremus.
-v. O Lord, we ask thee to save us from dangers to mind and to body: and, by the intercession of the blessed and glorious Virgin Mother of God, blessed Joseph, the blessed Apostles Peter and Paul, blessed~
-r. N. and all the Saints, to eliminate all enmity and errors, that thy Church may safely serve thee in freedom.
+v. Oh Señor, te rogamos que guardes de peligro nuestros cuerpos y nuestras almas, y que por la intercesión de la bienaventurada y gloriosa Virgen Madre de Dios, San José, los Apóstoles San Pedro y San Pablo, San~
+r. N. y todos los Santos, destruido todo error y enemigo, te sirva tu Iglesia en seguridad y libertad.
 $Per eumdem 
 
 [Suffragium11]
-Ant. May all the Saints intercede for us with the Lord.
+Ant. Intercedan todos los Santos por nosotros ante el Señor.
 _
-V. The Lord hath made his holy one wonderful: 
-R. The Lord will hear me when I cry unto him. 
+V. El Señor ha hecho admirable a su santo.
+R. El Señor me oirá siempre que a El clame. 
 _
-!Prayer
-!At the letter N., the name of the Titular of the local church is said, if the title is not a divine person or a mystery of the Lord, and when the Office or a Commemoration was not already said of the Saint, and when the name is not already in the prayer. The names of the holy Angels and of St. John the Baptist, if they are titulars, are said before the name of St. Joseph. In all these cases, the words "blessed N." are omitted.
+!Oración
+!En la letra N. se dice el nombre del Titular de la iglesia, salvo si éste es una persona divina, un misterio del Señor, o si se ha dicho ya el Oficio o Conmemoración a nombre del Santo, o si el nombre estuviera ya en la oración. Si el titular fuera uno de los Santos Ángeles o S. Juan Bautista, su nombre se dice tras el de S. José. En cualquiera de estos casos, se omiten las palabras "San N."
 $Oremus.
-v. O Lord, we ask thee to save us from dangers to mind and to body: and, by the intercession of the blessed Joseph, the blessed Apostles Peter and Paul, blessed!~
-r. N. and all the Saints, to eliminate all enmity and errors, that thy Church may safely serve thee in freedom.
+v. Oh Señor, te rogamos que guardes de peligro nuestros cuerpos y nuestras almas, y que por la intercesión de la bienaventurada y gloriosa Virgen Madre de Dios, San José, los Apóstoles San Pedro y San Pablo, San~
+r. N. y todos los Santos, destruido todo error y enemigo, te sirva tu Iglesia en seguridad y libertad.
 $Per eumdem
 
 [SuffragiumTridentinumFeriale]
-Deliver us from our enemies, O thou our God, by the sign of the Cross.
+Líbranos de nuestros enemigos, oh Dios nuestro, por el signo de la Cruz.
 _
-V. Let all the earth adore thee, and sing to thee.
-R. Let it sing a psalm to thy name, O Lord.
+V. Adórete toda la tierra, y te celebre.
+R. Cante salmos a tu nombre, oh Señor.
 _
-!Prayer
+!Oración
 $Oremus
-v. Keep us, we beseech thee, O Lord, in everlasting peace, whom thou didst deign to redeem by the wood of the holy Cross.
+v. Te pedimos nos guardes, Señor, en paz perpetua, a quienes te dignaste redimir por el madero de la Santa Cruz.
 
 [Suffragium2]
-Ant. He that was crucified is risen from the dead, and hath redeemed us. Alleluia, Alleluia. 
+Ant. El que fue crucificado ha resucitado de entre los muertos, y nos ha redimido. Aleluya, aleluya. 
 _
-V. Say among the heathen, Alleluia 
-R. That the Lord reigneth from the tree, Alleluia
+V. Anunciad a las naciones, aleluya.
+V. Que el Señor reinó desde el madero, aleluya.
 _
-!Prayer
+!Oración
 $Oremus 
-O God, who didst send thy Son to suffer death for us upon the Cross, that thou mightest deliver us from the power of the enemy grant unto us thy servants to be made partakers of his Resurrection. 
+Oh Dios, que enviaste a tu Hijo para sufrir por nosotros la muerte en la Cruz, líbranos del poder del enemigo, y concédenos el ser partícipes de su Resurrección.
 $Per eumdem
 
 [Suffragium3]
-!Commemoration of the Blessed Virgin Mary. 
-Ant. O Holy Mary, be thou an help to the helpless, a strength to the fearful, a comfort to the sorrowful; pray for the people, plead for the clergy, make intercession for all women vowed to God may all that keep thine holy remembrance, feel the might of thine assistance. 
+!Conmemoración de la Bienaventurada Virgen María.
+Ant. Santa María, fortalece a los débiles, consuela a los afligidos; ruega por el pueblo, interésate por el clero, intercede por el devoto sexo femenino; experimenten tu auxilio todos cuantos celebran tu santa festividad. 
 _
-V. Pray for us, holy Mother of God. 
-R. That we may be made worthy of the promises of Christ. 
+V. Ruega por nosotros, Santa Madre de Dios.
+R. Para que seamos dignos de las promesas de Cristo.
 _
-!Prayer
+!Oración
 $Oremus. 
-Grant, we beseech thee, O  Lord God, unto all thy servants, that they may continually enjoy soundness both of mind and of body, and by the glorious intercession of the Blessed Mary, always a Virgin, may be delivered from present sadness, and enter into the joy of thine eternal gladness. 
+Te pedimos, Señor, que nosotros, tus siervos, gocemos siempre de salud de alma y cuerpo; y, por la intercesión gloriosa de Santa María, la Virgen, líbranos de las tristezas de este mundo, y concédenos las alegrías del cielo.
 
 [Suffragium41]
-!Commemoration of St. Joseph 
-Ant. Behold a faithful and wise servant whom his Lord hath made ruler over His household. 
+!Conmemoración de S. José
+Ant. Éste es el siervo fiel y prudente, constituido por su Señor sobre su familia. 
 _
-V. Glory and riches shall be in his house. 
-R. And his righteousness endureth for ever. 
+V. En su casa habrá riquezas y abundancia.
+R. Su justicia dura por los siglos de los siglos.
 _
-!Prayer
+!Oración
 $Oremus. 
-O God, who, in thine unspeakable foreknowledge, didst choose thy blessed servant Joseph to be the husband of thine own most holy Mother; mercifully grant that now that he is in heaven with thee, we who on earth do reverence him for our defender, may worthily be holpen by the succour of his prayers to thee on our behalf. 
+Concédenos, Señor, que en tu inefable providencia escogiste a su bienaventurado siervo José como esposa de tu santísima Madre, que de aquel a quien veneramos en la tierra, merezcamos su intercesión en el cielo.
 
 [Suffragium42]
-!Commemoration of St. Joseph 
-Ant. l Jesus himself began to be about thirty years of age, being (as was supposed) the son of Joseph. 
+!Conmemoración de S. José
+Ant. Jesús, al empezar, tenía unos treinta años, y se pensaba que era hijo de José. 
 _
-V. The mouth of the righteous speaketh wisdom. 
-R. And his tongue talketh judgment. 
+V. La boca del justo expone la sabiduría.
+R. Y su lengua explica la justicia.
 _
-!Prayer
+!Oración
 $Oremus. 
-O God, who, in thine unspeakable foreknowledge, didst choose thy blessed servant Joseph to be the husband of thine own most holy Mother; mercifully grant that now that he is in heaven with thee, we who on earth do reverence him for our defender, may worthily be holpen by the succour of his prayers to thee on our behalf. 
+Concédenos, Señor, que en tu inefable providencia escogiste a su bienaventurado siervo José como esposa de tu santísima Madre, que de aquel a quien veneramos en la tierra, merezcamos su intercesión en el cielo.
 
 [Suffragium51]
-!Commemoration of the Holy Apostles Peter and Paul
-Ant. Peter the Apostle, and Paul the Teacher of the Gentiles, have taught us thy law, O Lord. 
+!Conmemoración de los Apóstoles S. Pedro y S. Pablo
+Ant. Pedro Apóstol, y Pablo el doctor de los pueblos, nos enseñan tu ley, Señor.
 _
-V. Thou shalt make them princes over all the earth. 
-R. They shall be mindful of thy Name, O Lord. 
+V. Les constituirás príncipes sobre toda la tierra.
+R. Se acordarán, Señor, de tu nombre.
 _
-!Prayer
+!Oración
 $Oremus. 
-O God, whose right hand caught the Blessed Peter when he walked upon the water, and began to sink, and thrice delivered his fellow-Apostle Paul from the deep of the sea, when he suffered shipwreck graciously hear us, and grant, for the sake of them both, that we also may attain everlasting glory. 
+Oh Dios, cuya diestra sostuvo a San Pedro, para que no se sumergiera al andar sobre las olas, y libró a San Pablo, su compañero de apostolado, de caer en el profundo abismo al naufragar por tercera vez; óyenos propicio, y concédenos por los méritos de ambos que consigamos la gloria de la eternidad. 
 
 [Suffragium52]
-!Commemoration of the Holy Apostles Peter and Paul
-Ant. These are glorious princes over all the earth, they loved one another in their lives, and in their death they were not divided. 
+!Conmemoración de los Apóstoles S. Pedro y S. Pablo
+Ant. Éstos son los gloriosos príncipes de la tierra, se amaron el uno al otro durante su vida, y en su muerte no serán separados.
 _
-V. Their sound is gone out through all the earth. 
-A. And their words to the ends of the world. 
+V. Corre su voz por toda la tierra.
+R. Sus palabras llegan hasta los límites del orbe.
 _
-!Prayer
+!Oración
 $Oremus. 
-O God, whose right hand caught the Blessed Peter when he walked upon the water, and began to sink, and thrice delivered his fellow-Apostle Paul from the deep of the sea, when he suffered shipwreck graciously hear us, and grant, for the sake of them both, that we also may attain everlasting glory. 
+Oh Dios, cuya diestra sostuvo a San Pedro, para que no se sumergiera al andar sobre las olas, y libró a San Pablo, su compañero de apostolado, de caer en el profundo abismo al naufragar por tercera vez; óyenos propicio, y concédenos por los méritos de ambos que consigamos la gloria de la eternidad. 
 
 [Suffragium6]
-!For Peace
-Ant. Give peace in our time, O Lord, because there is no one else who fights for us, if not You, our God.
+!Por la paz
+Ant. Danos la paz en nuestros días, Señor, pues no hay quien combata por nosotros, sino Tú, Dios nuestro.
 _
-V. Peace be within thy walls. 
-R. And prosperity within thy palaces. 
+V. Haya paz dentro de tus muros.
+R. Y prosperidad en tus palacios.
 _
-!Prayer
-v. Let us Pray 
-O God, from whom all holy desires, all good counsels, and all just works do proceed; Give unto thy servants that peace which the world cannot give; so that, with our hearts set to obey thy commandments, and freed from the fear of the enemy, we may pass our lives in peace under thy protection.
+!Oración
+v. Oremos.
+v. ¡Oh Dios, de quien proceden los santos deseos, los consejos rectos y las obras buenas!; concede a tus siervos aquella paz que el mundo no les puede dar, para que nuestros corazones cumplan tus mandamientos y nuestro tiempo, alejado todo temor de guerra, discurra bajo tu protección, en la tranquilidad.
 $Per Dominum
 
 [Litania]
@@ -1289,168 +1290,169 @@ $Fidelium animae
 
 [Day0M Laudes]
 !Rev 7, 12
-v. Benediction, and glory, and wisdom, and thanksgiving, honour, and power, and strength to our God for ever and ever. Amen.
+v. La alabanza y la gloria y la sabiduría y la acción de gracias y el honor y el poder y la fuerza son de nuestro Dios, por los siglos de los siglos. Amén.
 $Deo gratias
 _
-R.br. Incline my heart * into thy testimonies.
-R. Incline my heart * into thy testimonies.
-V. Turn away my eyes that they may not behold vanity: quicken me in thy way.
-R. Into thy testimonies.
+R.br. Inclina mi corazón * a tus preceptos.
+R. Inclina mi corazón * a tus preceptos.
+V. Aparta mis ojos de las vanidades, dame vida con tu palabra.
+R. A tus preceptos.
 &Gloria
-R. Incline my heart * into thy testimonies.
+R. Inclina mi corazón * a tus preceptos.
 
 [DayFM Laudes]
 !Rom 13, 12-13
-v. The night is passed, and the day is at hand. Let us therefore cast off the works of darkness, and put on the armour of light. Let us walk honestly, as in the day.
+v. La noche está avanzada, el día está cerca: dejemos, pues, las obras de las tinieblas y pongámonos las armas de la luz. Andemos como en pleno día, con dignidad.
 $Deo gratias
 _
-R.br. Heal my soul, * for I have sinned against thee.
-R. Heal my soul, * for I have sinned against thee.
-V. I said: O Lord, be thou merciful to me
-R. For I have sinned against thee.
+R.br. Sáname. * Porque he pecado contra ti.
+R. Sáname. * Porque he pecado contra ti.
+V. Yo dije,  Señor, ten misericordia.
+R. Porque he pecado contra ti.
 &Gloria
-R. Heal my soul, * for I have sinned against thee.
+R. Sáname. * Porque he pecado contra ti.
 
 [Day6M Laudes]
 !Rom 13, 12-13
-v. The night is passed, and the day is at hand. Let us therefore cast off the works of darkness, and put on the armour of light. Let us walk honestly, as in the day.
+v. La noche está avanzada, el día está cerca: dejemos, pues, las obras de las tinieblas y pongámonos las armas de la luz. Andemos como en pleno día, con dignidad.
 $Deo gratias
 _
-R.br. Heal my soul, * for I have sinned against thee.
-R. Heal my soul, * for I have sinned against thee.
-V. I said: O Lord, be thou merciful to me
-R. For I have sinned against thee.
+R.br. Sáname. * Porque he pecado contra ti.
+R. Sáname. * Porque he pecado contra ti.
+V. Yo dije,  Señor, ten misericordia.
+R. Porque he pecado contra ti.
 &Gloria
-R. Heal my soul, * for I have sinned against thee.
+R. Sáname. * Porque he pecado contra ti.
 
 [Day0M Vespera]
 !2 Cor 1, 3-4
-v. Blessed be the God and Father of our Lord Jesus Christ, the Father of mercies, and the God of all comfort. Who comforteth us in all our tribulation.
+v. Bendito sea Dios, Padre de nuestro Señor Jesucristo, Padre de las misericordias, y Dios de toda consolación, el cual nos consuela en todas nuestras aflicciones.
 $Deo gratias
 _
-R.br. How great are thy works, O Lord.  
-R. How great are thy works, O Lord.  
-V. Thou hast made all things in wisdom.
-R. Thy works, O Lord.
+R.br. Cuántas son * tus obras, Señor. 
+R. Cuántas son * tus obras, Señor. 
+V. Y todas las hiciste con sabiduría.
+R. Tus obras, Señor.
 &Gloria
-R. How great are thy works, O Lord.
+R. Cuántas son * tus obras, Señor. 
   
 [DayFM Vespera]
 !2 Cor 1, 3-4
-v. Blessed be the God and Father of our Lord Jesus Christ, the Father of mercies, and the God of all comfort. Who comforteth us in all our tribulation.
+v. Bendito sea Dios, Padre de nuestro Señor Jesucristo, Padre de las misericordias, y Dios de toda consolación, el cual nos consuela en todas nuestras aflicciones.
 $Deo gratias
 _
-R.br. I will bless the Lord * at all times.
-R. I will bless the Lord * at all times.
-V. His praise shall be always in my mouth.
-R. At all times
+R.br. Bendigo al Señor. * En todo momento.
+R. Bendigo al Señor. * En todo momento.
+V. Su alabanza está siempre en mi boca.
+R. En todo momento.
 &Gloria
-R. I will bless the Lord * at all times.
+R. Bendigo al Señor. * En todo momento.
 
 [Day6M Vespera]
 !Rom 11, 33
-v. O the depth of the riches of the wisdom and of the knowledge of God! How incomprehensible are his judgments, and how unsearchable his ways! 
+v. ¡Qué abismo de riqueza, de sabiduría y de conocimiento el de Dios! ¡Qué insondables sus decisiones y qué irrastreables sus caminos!
 $Deo gratias
 _
-R.br. Great is our Lord, and great is his power.
-R. Great is our Lord, and great is his power.
-V. and of his wisdom there is no number. 
-R. And great is his power.
+R.br. Nuestro Señor * es grande y poderoso. 
+R. Nuestro Señor * es grande y poderoso. 
+V. Su sabiduría no tiene medida.
+R. Es grande y poderoso.
 &Gloria
-R. Great is our Lord, and great is his power.
+R. Nuestro Señor * es grande y poderoso. 
 
 [AdvM Laudes]
-!Isa 2, 3
-v. Come and let us go up to the mountain of the Lord, and to the house of the God of Jacob, and he will teach us his ways, and we will walk in his paths: for the law shall come forth from Sion, and the word of the Lord from Jerusalem.
+!Is 2, 3
+v. Venid, subamos al monte del Señor, a la casa del Dios de Jacob. Él nos instruirá en sus caminos y marcharemos por sus sendas; porque de Sión saldrá la ley, la palabra del Señor de Jerusalén.
 $Deo gratias
 _
-R.br. Come to my rescue, * O God, Lord of hosts.
-R. Come to my rescue, * O God, Lord of hosts.
-V. show us thy face, and we shall be saved.
-R. O God Lord of hosts.
+R.br. Ven a librarnos. * Señor, Dios de los ejércitos.
+R. Ven a librarnos. * Señor, Dios de los ejércitos.
+V. Que brille tu rostro y nos salve.
+R. Señor, Dios de los ejércitos.
 &Gloria
-R. Come to my rescue, * O God, Lord of hosts.
+R. Ven a librarnos. * Señor, Dios de los ejércitos.
 
 [AdvM Vespera]
 !Gen 49, 10
-v. The sceptre shall not be taken away from Juda, nor a ruler from his thigh, till he come that is to be sent, and he shall be the expectation of nations. 
+v. No se apartará de Judá el cetro, ni el bastón de mando de entre sus rodillas, hasta que venga aquel a quien está reservado, y le rindan homenaje los pueblos.
 $Deo gratias
 _
-R.br. Show us, O Lord, * thy mercy;
-R. Show us, O Lord, * thy mercy;
-V. And grant us thy salvation.
-R. thy mercy
+R.br. Muéstranos, Señor, * tu misericordia.
+R. Muéstranos, Señor, * tu misericordia.
+V. Y danos tu salvación
+R. Tu misericordia.
 &Gloria
-R. Show us, O Lord, * thy mercy; 
+R. Muéstranos, Señor, * tu misericordia.
 
 [QuadM Laudes]
-!Isa 58, 1
-v. Cry, cease not, lift up thy voice like a trumpet, and shew my people their wicked doings, and the house of Jacob their sins.
+!Is 58, 1
+v. Grita a pleno pulmón, no te contengas; alza la voz como una trompeta, denuncia a mi pueblo sus delitos, a la casa de Jacob sus pecados.
 $Deo gratias
 _
-R.br. For he hath delivered me * from the snare of the hunters.
-R. For he hath delivered me * from the snare of the hunters.
-V. And from the sharp word.
-R. from the snare of the hunters.
+R.br. Él me librará * de la red del cazador.
+R. Él me librará * de la red del cazador.
+V. Y de las palabras malignas.
+R. De la red del cazador.
 &Gloria
-R. For he hath delivered me * from the snare of the hunters.
+R. Él me librará * de la red del cazador.
 
 [QuadM Vespera]
 !Joel 2, 17
-v. Between the porch and the altar the priests the Lord's ministers shall weep, and shall say: Spare, O Lord, spare thy people: and give not thy inheritance to reproach, that the heathen should rule over them. 
+v. Lloren entre el vestíbulo y el altar los sacerdotes, ministros del Señor, y digan: Perdona, Señor, perdona a tu pueblo, y no abandones al oprobio la herencia tuya, entregándola al dominio de las naciones.
 $Deo gratias
 _
-R.br He will overshadow * thee with his shoulders.
-R. He will overshadow * thee with his shoulders.
-V. And under his wings thou shalt trust.
-R. Thee with his shoulders.
+R.br. Te cubrirá * con sus plumas. 
+R. Te cubrirá * con sus plumas. 
+V. Bajo sus alas te refugiarás.
+R. Con sus plumas.
 &Gloria
-R. He will overshadow * thee with his shoulders.
+R. Te cubrirá * con sus plumas. 
 
 [Quad5M Laudes]
 !Jer 11, 19
-v. Come, let us put wood on his bread, and cut him off from the land of the living, and let his name be remembered no more.
+v. Talemos el árbol en su lozanía, arranquémoslo de la tierra de los vivos, que jamás se pronuncie su nombre.
 $Deo gratias
 _
-R.br. Deliver, * O God, my soul from the sword.
-R. Deliver, * O God, my soul from the sword.
-V. My only one from the hand of the dog.
-R. O God, my soul from the sword.
-R. Deliver, * O God, my soul from the sword.
+R.br. Libra de la espada. * ¡Oh Dios!, a mi alma.
+R. Libra de la espada. * ¡Oh Dios!, a mi alma.
+V. Y a mi única vida de la garra del mastín.
+R. ¡Oh Dios!, a mi alma.
+R. Libra de la espada. * ¡Oh Dios!, a mi alma.
 
 [Quad5M Vespera]
 !Jer 11, 20
-v. But thou, O Lord of Sabaoth, who judgest justly, and triest the reins and hearts, let me see thy revenge on them: for to thee I have revealed my cause.
+v. Pero Tú, oh Señor de los ejércitos, que juzgas con justicia, y escudriñas los corazones y afectos, Tú harás que yo te vea tomar venganza de ellos, puesto que en tus manos puse mi causa, Señor, Dios mío.
 $Deo gratias
 _
-R.br. From the lion's mouth, * O Lord, Save me.
-R. From the lion's mouth, * O Lord, Save me.
-V. And my lowness from the horns of the unicorns. * O Lord. save me.
-R. From the lion's mouth, * O Lord, Save me.
+R.br. Sálvame, * Señor, de las fauces del león.
+R. Sálvame, * Señor, de las fauces del león.
+V. A este pobre, de los cuernos del búfalo.
+R. Señor, de las fauces del león.
+R. Sálvame, * Señor, de las fauces del león.
 
 [PaschM Laudes]
 !Rom 6, 9-10
-v. Christ rising again from the dead, dieth now no more, death shall no more have dominion over him. For in that he died to sin, he died once; but in that he liveth, he liveth unto God:
+v. Pues sabemos que Cristo, una vez resucitado de entre los muertos, ya no muere más; la muerte ya no tiene dominio sobre él. Porque quien ha muerto, ha muerto al pecado de una vez para siempre; y quien vive, vive para Dios. 
 $Deo gratias
 _
-R.br. The Lord is risen from the sepulchre * Alleluia, alleluia
-R. The Lord is risen from the sepulchre Alleluia, alleluia
-V. Who for us was hanged on the tree
-R. Alleluia, alleluia
+R.br. El Señor ha resucitado del sepulcro. * Aleluya, aleluya.
+R. El Señor ha resucitado del sepulcro. * Aleluya, aleluya.
+V. El que por nosotros colgó del madero. 
+R. Aleluya, aleluya.
 &Gloria
-R. The Lord is risen from the sepulchre Alleluia, alleluia
+R. El Señor ha resucitado del sepulcro. * Aleluya, aleluya.
 
 [PaschM Vespera]
 !Rom 6, 9-10
-v. Christ rising again from the dead, dieth now no more, death shall no more have dominion over him. For in that he died to sin, he died once; but in that he liveth, he liveth unto God
+v. Pues sabemos que Cristo, una vez resucitado de entre los muertos, ya no muere más; la muerte ya no tiene dominio sobre él. Porque quien ha muerto, ha muerto al pecado de una vez para siempre; y quien vive, vive para Dios. 
 $Deo gratias
 _
-R.br. The Lord is risen, indeed. Alleluia, alleluia.
-R. The Lord is risen, indeed. Alleluia, alleluia.
-V. And hath appeared to Simon.
-R. Alleluia, alleluia.
+R.br. El Señor ha resucitado. Aleluya, aleluya.
+R. El Señor ha resucitado. Aleluya, aleluya.
+V. Y se ha aparecido a Pedro.
+R. Aleluya, aleluya.
 &Gloria
-R. The Lord is risen, indeed. Alleluia, alleluia.
+R. El Señor ha resucitado. Aleluya, aleluya.
 
 [LitaniaM]
 @:Litania

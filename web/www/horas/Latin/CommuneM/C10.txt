@@ -1,0 +1,61 @@
+@Commune/C10
+
+[Capitulum Vespera]
+@Commune/C10:Capitulum Vespera
+_
+R.br. Ave María, grátia plena, * Dóminus tecum.
+R. Ave María, grátia plena, * Dóminus tecum.
+V. Benedícta tu in muliéribus, et benedíctus fructus ventris tui
+R. Dóminus tecum.
+&Gloria
+R. Ave María, grátia plena, * Dóminus tecum.
+
+[Ant Matutinum]
+Memor fuit in saeculum * testamenti sui Dominus Deus noster;;104(1-15)
+Auxit Dominus * populum suum: et firmavit eum super inimicos eius;;104(16-27)
+Eduxit Deus * populum suum in exsultatione, et electos suos in laetitia;;104(28-45)
+v. Memor fuit Dominus verbi sancti sui
+R. Quod locutus est ad Abraham, puerum suum
+Salvavit eos Dominus * propter nomen suum;;105(1-15)
+Obliti sunt Deum * qui salvabit eos;;105(16-31)
+Cum tribularentur * vidit Dominus: et audivit orationem eorum;;105(32-48)
+V. Salvos nos fac Domine Deus noster
+R. Ut confiteamur nomini sancto tuo
+Clamaverunt ad Dominum * et de necessitatibus eorum liberavit eos;;106(1-14)
+Ipsi viderunt * opera Dei et mirabilia eius;;106(15-30)
+Videbunt recti * et laetabuntur, et intelligent misericordia Domini;;106(31-43)
+V. Diffusa est gratia in labiis tuis.
+R. Propterea benedixit te Deus in aeternum.
+
+[Lectio11]
+!from tempora
+
+[Responsory1]
+R. Sancta et immaculata virginitas; quibus te laudibus offeram, nescio:
+* Quia quem caeli capere non poterant, tuo gremio contulisti.
+V. Benedicta tu in mulieribus, et benedictus fructus ventris tui.
+R. Quia quem caeli capere non poterant, tuo gremio contulisti.
+
+[Lectio21]
+!from tempora
+
+[Responsory2]
+R. Felix namque es, sacra Virgo Maria, et omni laude dignissima:
+* Quia ex te ortus est sol justitie, * Christus Deus noster.
+V. Ora pro populo, interveni pro clero, intercede pro devoto femineo sexu:~
+sentiant omnes tuum juvamen, quicumque celebrant tuam sanctam commemorationem.
+R. Quia ex te ortus est sol justitie,
+&Gloria
+R. Christus Deus noster.
+
+[Capitulum Laudes]
+@:Capitulum Vespera
+
+[Responsory Tertia]
+@CommuneM/C6
+
+[Responsory Sexta]
+@CommuneM/C6
+
+[Responsory Nona]
+@CommuneM/C6

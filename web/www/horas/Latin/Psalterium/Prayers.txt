@@ -73,15 +73,15 @@ V. Fidélium ánimæ per misericórdiam Dei requiéscant in pace.
 R. Amen.
 
 [Per Dominum]
-r. Per Dóminum nostrum Jesum Christum, Fílium tuum: qui tecum vivit et regnat in unitáte Spíritus Sancti Deus, per ómnia sǽcula sæculórum.
+r. Per Dóminum nostrum Jesum Christum, Fílium tuum: qui tecum vivit et regnat in unitáte Spíritus Sancti, Deus, per ómnia sǽcula sæculórum.
 R. Amen.
 
 [Per Dominum eiusdem]
-r. Per Dóminum nostrum Jesum Christum, Fílium tuum: qui tecum vivit et regnat in unitáte ejúsdem Spíritus Sancti Deus, per ómnia sǽcula sæculórum.
+r. Per Dóminum nostrum Jesum Christum, Fílium tuum: qui tecum vivit et regnat in unitáte ejúsdem Spíritus Sancti, Deus, per ómnia sǽcula sæculórum.
 R. Amen.
 
 [Qui cum Patre]
-r. Qui cum Pátre et Spíritu Sancto vivis et regnas Deus per ómnia sǽcula sæculórum.
+r. Qui cum Pátre et Spíritu Sancto vivis et regnas, Deus, per ómnia sǽcula sæculórum.
 R. Amen.
 
 [Per eumdem]
@@ -181,7 +181,12 @@ v. Orémus.
 v. Te decet laus, + te decet hymnus: tibi glória Deo Patri, et Fílio, cum Spíritu Sancto in sǽcula sæculórum. Amen.
 
 [MLitany]
-v. Kýrie eléison. Christe, eléison. Kýrie, eléison.
+v. Kýrie, eléison. Christe, eléison. Kýrie, eléison.
+&pater_noster
+
+[MLitany2]
+v. Kýrie, eléison. Christe, eléison. Kýrie, eléison.
+!« Pater Noster » dicitur secreto usque ad « Et ne nos indúcas in tentatiónem: »
 &pater_noster
 
 [Alleluia Simplex]

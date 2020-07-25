@@ -3,18 +3,15 @@ S. Petri Celestini Papae Confessoris;;Duplex;;3;;vide C4
 
 [Rule]
 Gloria
-Prefatio=Apostolis
 
 [Introitus]
 !John 21:15-17
-v. If you love Me, Simon Peter, feed My lambs, feed My sheep. (Alleluia,~
-alleluia.)
+v. If you love Me, Simon Peter, feed My lambs, feed My sheep. Alleluia, alleluia.
 !Ps 29:2
 I will extol You, O Lord, for You drew me clear and did not let my enemies~
 rejoice over me.
 &Gloria
-v. If you love Me, Simon Peter, feed My lambs, feed My sheep. (Alleluia,~
-alleluia.)
+v. If you love Me, Simon Peter, feed My lambs, feed My sheep. Alleluia,alleluia.
 
 [Oratio]
 O God, Who raised blessed Peter Celestine to the lofty dignity of Supreme~
@@ -57,7 +54,7 @@ Continuation + of the Holy Gospel according to Matthew
 !Matt. 16:13-19
 At that time, Jesus, having come into the district of Caesarea Philippi, began~
 to ask His disciples, saying, Who do men say the Son of Man is? But they said,~
-Some say, John the Baptist; and others, Elias; and others, Jeremia, or one of~
+Some say, John the Baptist; and others, Elias; and others, Jeremias, or one of~
 the prophets. He said to them, But who do you say that I am? Simon Peter~
 answered and said, You are the Christ, the Son of the living God. Then Jesus~
 answered and said, Blessed are you, Simon Bar-Jona, for flesh and blood has not~
