@@ -1,0 +1,49 @@
+[Rank]
+S. Joannis Apostoli ante portam Latinam;;Duplex majus;;4;;ex C1
+
+[Rule]
+Gloria
+Credo
+Prefatio=Apostolis
+
+[Comment]
+# S. João ante a Porta Latina
+! 2 classe
+! Paramentos vermelhos
+Jesus prometera a Tiago e a João, filhos de Zebedeu, que beberiam o cálice de sua paixão a fim de poderem participar do triunfo da sua ressurreição. O Imperador Domiciano chamou João a Roma, condenando-o a ser mergulhado numa caldeira de azeite fervendo. S. João, por um milagre extraordinário, saiu ileso e ainda mais vigoroso. Construíram naquele lugar um santuário junto à Porta Latina, o qual foi consagrado ao Santo Apóstolo. Aí se faz a Estação do Sábado da Paixão.
+
+[Introitus]
+@Commune/C2p:Introitus
+
+[Oratio]
+Ó Deus, que nos vedes perturbados por males que nos vêm de todos os lados, fazei, como Vos pedimos, que sejamos protegidos pela gloriosa intercessão de São João, vosso Apóstolo e Evangelista.
+$Per Dominum.
+
+[Lectio]
+@Sancti/05-01:Lectio
+
+[Graduale]
+Aleluia, aleluia
+!Sl 91:13
+O justo florescerá como a palma: e se multiplicará como o cedro do Líbano. Aleluia
+!Sl 14:6
+V. O justo brotará como o lírio e florescerá eternamente na presença do Senhor. Aleluia.
+
+[Evangelium]
+Continuação ++ do santo Evangelho segundo S. Mateus.
+!Mt 20:20-23
+Naquele tempo: chegou-se a Jesus a mãe dos filhos de Zebedeu com seus filhos, adorando-o e pedindo-lhe uma coisa. Jesus lhe disse: «que queres?» Respondendo-Lhe: «Ordenai que estes meus dois filhos se assentem um à vossa direita e outro à vossa esquerda, no vosso reino.» Mas respondendo, Jesus disse: «Não sabeis o que pedis. Podeis beber o cálice que eu hei-de beber?» Eles lhe disseram: «Podemos.» Jesus lhes disse: «Bebereis, na verdade, o meu cálice; assentar-vos, porém, à minha direita ou à esquerda, não me compete a mim vo-lo dar, mas isso é para aqueles para quem está preparado por meu Pai».
+
+[Offertorium]
+@Commune/C2p:Offertorium
+
+[Secreta]
+Tendo recebido os nossos dons e orações, ó Senhor, purificai-nos, como Vos pedimos, pelos mystérios celestes e atendei-nos em vossa clemência.
+$Per Dominum
+
+[Communio]
+@Commune/C2p:Communio
+
+[Postcommunio]
+Nutridos com o pão celeste, ó Senhor, nós Vos pedimos que esse alimento nos aproveite para a vida eterna.
+$Per Dominum

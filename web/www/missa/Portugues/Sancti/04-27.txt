@@ -16,6 +16,7 @@ Petre
 # 27 IV – S. Pedro Canísio, Confessor e Doutor
 ! 3 classe
 ! Paramentos brancos
+Nascido em Nimegue (Holanda), a 8 de Maio de 1521, morreu em Friburgo (Suiça) a 21 de Dezembro de 1597, foi beatificado por Pio XI. É a justo título este santo, holandês, apóstolo da Alemanhã, cognominado o martelo dos herejes, o Jerónimo e o Agostinho de seu século; defensor da Igreja contra as portas do inferno. Por suas eloquentes pregações, por seus livros de controvérsia e piedade, pela fundação de vários colégios, pelas missões de que quatro Papas o encarregaram e fez reflorescer a vida católica. Assistiu em qualidade de teólogo ao Concílio de Trento, sustentando os interesses da Igreja na dieta de Augsburgo e no colóquio de Worms. Profundamente humilde, recusou os arcebispados de Viena e Colónia. Nós lhe devemos o primeiro catecismo, que bastaria para lhe merecer o reconhecimento dos católicos. O bem-aventurado terminou os seus dias no Colégio de S. Miguel em Friburgo, onde os peregrinos visitam o seu quarto e lhe veneram o túmulo.
 
 [Introitus]
 @Commune/C4a:Introitus
@@ -43,12 +44,12 @@ $Per Dominum
 @Commune/C4a:Offertorium
 
 [Secreta]
-@Commune/C4a:Secreta
+Senhor, que a piedosa oração de Santo Pedro vosso Pontífice e Doutor, nos não abandone, e que por ela as nossas ofertas Vos sejam agradáveis e alcancemos benigna e continuamente a vossa misericórdia.
 $Per Dominum.
 
 [Communio]
 @Commune/C4a:Communio
 
 [Postcommunio]
-@Commune/C4a:Postcommunio
+Ó Senhor, dignai-Vos conceder-nos que o B. Pedro, vosso Pontífice e ilustre Doutor, seja nosso intercessor perante Vós, a fim de que este sacrifício nos alcance a salvação.
 $Per Dominum

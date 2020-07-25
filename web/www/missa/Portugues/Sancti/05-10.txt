@@ -9,6 +9,7 @@ vide C4;mtv
 # 10 V – S. Antonino, Bispo e Confessor
 ! 3 classe
 ! Paramentos brancos
+Tendo entrado aos 16 anos para a Ordem de S. Domingos nomeado arcebispo de Florença, Antonino notabilizou-se no seu cargo, pela austeridade de vida, caridade e zelo sacerdotal. Sua prudência mereceu-lhe o título de Antonino dos Conselhos. Carregado de virtudes, faleceu em 1459.
 
 [Introitus]
 @Commune/C4:Introitus

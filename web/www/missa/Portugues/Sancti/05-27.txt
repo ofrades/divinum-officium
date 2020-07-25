@@ -13,6 +13,7 @@ Gloria
 # 27 V – S. Beda, Confessor e Doutor
 ! 3 classe
 ! Paramentos brancos
+Beda, nascido em Jarrow, no Nortúmbria, desde a mais tenra idade foi confiado a S. Bento Biscopo, abade do Mosteiro benedictino de Wearmouth, tornando-se também filho do grande Patriarca dos monges do Ocidente.
 
 [Introitus]
 @Commune/C4a:Introitus

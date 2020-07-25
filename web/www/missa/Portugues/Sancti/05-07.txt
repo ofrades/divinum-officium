@@ -3,6 +3,12 @@ S. Stanislai Episcopi Martyri;;Duplex;;3;;vide C2
 
 [Rule]
 
+[Comment]
+# S. Estanislau, Bispo e Mártir
+! 3 classe
+! Paramentos vermelhos
+Nascido na Polónia, Estanislau foi nomeado bispo de Cracóvia em 1072. Boleslau II, cuja tirania e desregramento de costumes censurava, votou-lhe grande ódio. Um dia, ao celebrar Estanislau a Santa Missa, o príncipe agarrou-o pela garganta, sufocando-o. Era o ano de 1079. Este Santo é o padroeiro da Polónia.
+
 [Introitus]
 @Commune/C2p:Introitus
 
