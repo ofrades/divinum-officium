@@ -10,12 +10,12 @@
     "destroy": "alchemy destroy"
   },
   "dependencies": {
-    "@cloudflare/containers": "^0.1.0",
+    "@cloudflare/containers": "^0.3.7",
     "alchemy": "^2.0.0-beta.79",
-    "effect": "^4.0.0-rc.111"
+    "effect": "^4.0.0-rc.117"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260923.0",
-    "typescript": "^5.9.0"
+    "@cloudflare/workers-types": "^5.20260923.1",
+    "typescript": "^7.0.2"
   }
 }
