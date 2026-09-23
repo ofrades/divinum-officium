@@ -1,6 +1,6 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
-import { littleChapter, minorOratio } from "./chapter";
+import { lectioBrevis, littleChapter, minorOratio } from "./chapter";
 import { psalmodyRows } from "./psalterium";
 import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
@@ -227,6 +227,21 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
         );
         if (chapter) {
           columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines: chapter });
+          continue;
+        }
+      }
+      // Prime's short reading is generated too: blessing, reading, dismissal.
+      if (/^Lectio brevis/i.test(block.label) && hour === "Prima") {
+        const reading = await lectioBrevis(
+          request.source,
+          language,
+          hour,
+          selection.titles[0] ?? "",
+          context,
+          renderContext,
+        );
+        if (reading) {
+          columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines: reading });
           continue;
         }
       }

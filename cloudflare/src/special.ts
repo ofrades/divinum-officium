@@ -39,3 +39,21 @@ export async function specialBody(
   }
   return null;
 }
+
+/**
+ * The season key the Special files use (`[Per Annum]`, `[Adv]`, `[Nat]`, …),
+ * which is not the same wording as the liturgical season: ordinary time is
+ * "Per Annum" there, and the Pentecost octave has its own section.
+ */
+export function specialSeasonKey(dayKey: string): string {
+  if (/^Adv/.test(dayKey)) return "Adv";
+  if (/^Nat/.test(dayKey)) return "Nat";
+  if (/^Epi/.test(dayKey)) return "Epi";
+  if (/^Asc/.test(dayKey)) return "Asc";
+  if (/^Quadp/.test(dayKey)) return "Quad";
+  if (/^Quad5/.test(dayKey)) return "Quad5";
+  if (/^Quad/.test(dayKey)) return "Quad";
+  if (/^Pasc/.test(dayKey)) return "Pasch";
+  if (/^Pent/.test(dayKey)) return "Per Annum";
+  return "Per Annum";
+}

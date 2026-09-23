@@ -1,6 +1,6 @@
 import type { ConditionContext } from "./conditional";
 import { renderBody, type RenderContext } from "./render";
-import { specialBody, specialFileName } from "./special";
+import { specialBody, specialFileName, specialSeasonKey } from "./special";
 import { resolveSection } from "./texts";
 import type { OfficeLine } from "./office";
 import type { TextSource } from "./script";
@@ -107,4 +107,34 @@ export async function minorOratio(
     [...(versicles ?? []).slice(2, 4), ...(oremus ?? []), ...collect, ...(perDominum ?? [])],
     render,
   );
+}
+
+/**
+ * The short reading of Prime: the blessing that introduces it, the season's
+ * reading (with its citation), and the dismissal. The engine generates this
+ * section rather than reading it from the Ordinarium, which is why its script
+ * block is empty.
+ */
+export async function lectioBrevis(
+  source: TextSource,
+  lang: string,
+  hour: string,
+  dayKey: string,
+  context: ConditionContext,
+  render: RenderContext,
+): Promise<OfficeLine[] | null> {
+  if (hour !== "Prima") return null;
+
+  const blessing = await resolveSection({ name: "benedictio Prima", lang, source, context });
+  const reading = await specialBody(
+    source,
+    lang,
+    hour,
+    [specialSeasonKey(dayKey), "Per Annum", "Feria", "Dominica"],
+    context,
+  );
+  const dismissal = await resolveSection({ name: "Tu autem", lang, source, context });
+  if (blessing === null || reading === null) return null;
+
+  return renderBody([...blessing, ...reading, ...(dismissal ?? [])], render);
 }
