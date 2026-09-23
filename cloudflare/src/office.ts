@@ -1,6 +1,7 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
 import { lectioBrevis, littleChapter, minorOratio } from "./chapter";
+import { martyrology } from "./martyrology";
 import { psalmodyRows } from "./psalterium";
 import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
@@ -186,6 +187,7 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
   const languages = [request.lang1, request.lang2];
 
   const sections: OfficeSection[] = [];
+  const extraSections: OfficeSection[] = [];
   const weekday = new Date(`${request.date}T12:00:00Z`).getUTCDay();
   for (const block of blocks) {
     // The psalmody is the one block that becomes several rows: one per psalm,
@@ -230,6 +232,23 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
           continue;
         }
       }
+      // The martyrologium announces tomorrow's saints; it is generated from
+      // the next day's file in the version's own directory.
+      if (/^Martyrologium/i.test(block.label) && hour === "Prima") {
+        const reading = await martyrology(
+          request.source,
+          language,
+          version,
+          request.date,
+          context,
+          renderContext,
+        );
+        if (reading) {
+          columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines: reading.lines });
+          extraSections.push({ columns: [{ label: "", note: "", lines: language === request.lang1 ? reading.tail : [] }] });
+          continue;
+        }
+      }
       // Prime's short reading is generated too: blessing, reading, dismissal.
       if (/^Lectio brevis/i.test(block.label) && hour === "Prima") {
         const reading = await lectioBrevis(
@@ -265,6 +284,8 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
     }
     sections.push({ columns });
   }
+
+  for (const extra of extraSections) sections.push(extra);
 
   return {
     ok: true,
