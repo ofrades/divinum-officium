@@ -4,9 +4,12 @@
   "type": "module",
   "scripts": {
     "check": "tsc --noEmit",
-    "deploy": "alchemy deploy",
-    "deploy:prod": "alchemy deploy --stage prod",
+    "assets": "python3 tools/sync_assets.py",
+    "calendar": "python3 tools/build_calendar.py --repo .. --years 2025,2026,2027",
+    "build": "bun run assets && bun run calendar",
     "dev": "alchemy dev",
+    "deploy": "alchemy deploy --yes",
+    "deploy:prod": "alchemy deploy --stage prod --yes",
     "destroy": "alchemy destroy"
   },
   "dependencies": {
