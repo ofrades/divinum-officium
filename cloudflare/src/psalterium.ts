@@ -1,6 +1,7 @@
 import type { OfficeLine } from "./office";
 import { renderBody, renderLine, type RenderContext } from "./render";
 import { parseSections, sectionBody, type TextSource } from "./script";
+import { resolveSection } from "./texts";
 import { processConditionalLines, type ConditionContext } from "./conditional";
 
 // The psalmody: which psalms a little hour says on a given weekday, the text of
@@ -197,11 +198,15 @@ export async function psalmodyRows(
   if (!plan || plan.psalms.length === 0) return null;
   // A Sunday Prime that falls in Paschaltide or on a feast uses psalm 53 where
   // the psalter prints 117.
+  // A day can borrow its office from another file (`ex Sancti/12-25`), and the
+  // "Laudes 2" that switches psalm 117 for 53 lives in *that* file's rule as
+  // often as in this one's.
+  const borrowedRule = selection ? await borrowedFileRule(source, lang, selection, context) : "";
   if (
     version &&
     /196/.test(version) &&
     /117/.test(plan.psalms.map((spec) => spec.number).join(",")) &&
-    /Laudes 2|Prima=53/i.test(rule)
+    ((selection?.laudes ?? 0) === 2 || /Laudes 2|Prima=53/i.test(rule) || /Laudes 2|Prima=53/i.test(borrowedRule))
   ) {
     plan.psalms = plan.psalms.map((spec) => (spec.number === 117 ? { ...spec, number: 53 } : spec));
   }
@@ -209,10 +214,17 @@ export async function psalmodyRows(
   const close = await doxology(source, lang, rule, context, render);
   const rows: OfficeLine[][] = [];
 
+  // A feast that keeps the psalterium's psalms still brings its own antiphon:
+  // the rule says `Antiphonas horas`, and the antiphon is `[Ant <hour>]` in the
+  // day's file (or the file its rule redirects to with `ex`, or the commune).
+  const dayAntiphon = selection
+    ? await hourAntiphon(source, lang, hour, selection, context, render)
+    : null;
+
   for (const [index, spec] of plan.psalms.entries()) {
     const lines: OfficeLine[] = [];
     if (index === 0) {
-      const antiphon = renderLine(`Ant. ${plan.antiphon}`, render);
+      const antiphon = renderLine(`Ant. ${dayAntiphon ?? plan.antiphon}`, render);
       if (antiphon) lines.push(antiphon);
     }
     // A psalm said in parts carries its range in the title: `Psalmus 21(2-12)`.
@@ -229,7 +241,7 @@ export async function psalmodyRows(
 
   // The antiphon returns at the end of the last row, without its mediant.
   const last = rows[rows.length - 1];
-  const repeated = plan.antiphon.replace(/\s*\*\s*/, " ").trim();
+  const repeated = (dayAntiphon ?? plan.antiphon).replace(/\s*\*\s*/, " ").trim();
   const antiphon = renderLine(`Ant. ${repeated}`, render);
   if (antiphon) {
     last.push(antiphon);
@@ -238,4 +250,58 @@ export async function psalmodyRows(
   }
   void dayKey;
   return rows;
+}
+
+/** `[Ant <hour>]` from the day's own sources, when the rule asks for it. */
+async function hourAntiphon(
+  source: TextSource,
+  lang: string,
+  hour: string,
+  selection: DaySelection,
+  context: ConditionContext,
+  render: RenderContext,
+): Promise<string | null> {
+  if (!/Antiphonas horas/i.test(selection.rule ?? "")) return null;
+
+  const redirect = /^\s*(?:ex|vide)\s+([^;\n]+);?/im.exec(selection.rule ?? "");
+  const candidates = [
+    selection.winner,
+    redirect ? `${redirect[1].trim()}.txt` : undefined,
+    selection.commune || undefined,
+  ].filter((path): path is string => typeof path === "string" && path !== "");
+
+  for (const file of candidates) {
+    const body = await resolveSection({
+      name: `Ant ${hour}`,
+      lang,
+      source,
+      context,
+      dayFile: `horas/${lang}/${file}`,
+    });
+    if (body === null) continue;
+    const lines = renderBody(body, render);
+    const text = lines.map((line) => [line.marker, line.text].filter(Boolean).join(" ")).join(" ").trim();
+    void context;
+    if (text !== "") return text;
+  }
+  return null;
+}
+
+/** The `[Rule]` of the file a day's rule borrows its office from, if any. */
+async function borrowedFileRule(
+  source: TextSource,
+  lang: string,
+  selection: DaySelection,
+  context: ConditionContext,
+): Promise<string> {
+  const redirect = /^\s*(?:ex|vide)\s+([^;\n]+);?/im.exec(selection.rule ?? "");
+  if (!redirect) return "";
+  const file = `${redirect[1].trim()}.txt`;
+  for (const path of [`horas/${lang}/${file}`, `horas/Latin/${file}`]) {
+    const text = await source.read(path);
+    if (text === null) continue;
+    const body = sectionBody(parseSections(text, context), "Rule");
+    if (body) return body.join("\n");
+  }
+  return "";
 }

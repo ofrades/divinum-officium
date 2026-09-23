@@ -70,6 +70,8 @@ if (strictparam('dumpordo')) {
     rule        => $rule,
     duplex      => $duplex,
     vespera     => $vespera,
+    laudes      => $laudes,
+    communerule => $communerule,
     headline    => $headline,
     colourKey   => liturgical_color($headline),
     titles      => [@dayname],
@@ -155,6 +157,8 @@ def one_day(horas_dir: str, perl_lib: str, version: str, day: str, rite: str) ->
         "colourKey": text(payload.get("colourKey")),
         "duplex": payload.get("duplex", 0),
         "vespera": payload.get("vespera", 0),
+        "laudes": payload.get("laudes", 0),
+        "communerule": payload.get("communerule", ""),
         "titles": [text(t) for t in (payload.get("titles") or [])],
     }
 

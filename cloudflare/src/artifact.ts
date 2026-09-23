@@ -8,6 +8,8 @@ export interface DaySelection {
   communetype: string;
   rank: string;
   rule: string;
+  laudes: number;
+  communerule: string;
   headline: string;
   colourKey: string;
   titles: string[];
