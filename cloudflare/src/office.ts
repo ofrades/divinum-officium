@@ -1,4 +1,5 @@
 import type { DaySelection } from "./artifact";
+import { seasonFromDayKey, type ConditionContext } from "./conditional";
 import { parseScript, scriptSections, type TextSource } from "./script";
 
 // Assembling an hour: the day's identity comes from the calendar artifact, the
@@ -87,6 +88,26 @@ const COLOUR_NAMES: Record<string, string> = {
 
 export const SUPPORTED_HOURS = ["Prima", "Laudes", "Vesperae", "Completorium"] as const;
 
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * The day's rule can omit whole sections: `Omit Incipit Invitatorium Hymnus …`
+ * (Good Friday, for instance). The engine tests the rule against a section's
+ * *first word* — `#De Officio Capituli` is matched by `De`, `#Conclusio` by
+ * `Conclusion` — so this does the same (specials.pl, "Omit this section if the
+ * rule says so"), including its two guards.
+ */
+export function omittedByRule(label: string, rule: string, hour: string): boolean {
+  if (rule === "") return false;
+  const first = label.split(/\s+/)[0] ?? "";
+  if (first === "" || !new RegExp(`Omit.*? ${escapeRegExp(first)}`, "i").test(rule)) return false;
+  if (/Omit ad Matutinum/i.test(rule) && hour !== "Matutinum") return false;
+  if (/Capitulum/i.test(label) && /Capitulum Versum 2/i.test(rule) && (hour === "Laudes" || hour === "Vesperae")) return false;
+  return true;
+}
+
 export async function assembleOffice(request: AssembleRequest): Promise<OfficePayload> {
   const { source, hour, version, selection } = request;
   const notes: string[] = [];
@@ -96,8 +117,21 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
   if (script === null) {
     notes.push(`no Ordinarium script at horas/Ordinarium/${ordinariumHour}.txt`);
   }
-  const items = script === null ? [] : parseScript(script, version, hour);
-  const labels = scriptSections(items);
+  const context: ConditionContext = {
+    version,
+    // The season governs `tempore …` conditions; the artifact's day key names it.
+    season: seasonFromDayKey(selection.titles[0] ?? ""),
+    votive: "",
+    hour,
+  };
+  const items = script === null ? [] : parseScript(script, context);
+  const labels = scriptSections(items)
+    .filter((section) => !omittedByRule(section.label, selection.rule, hour))
+    // The preces are filled from tables the engine consults only when the day
+    // calls for them; an empty `#Preces …` marker is therefore not rendered
+    // until that table is ported.
+    .filter((section) => section.hasContent || !/^Preces/i.test(section.label))
+    .map((section) => section.label);
 
   notes.push(
     `frame only: ${labels.length} sections from the Ordinarium; references, psalmody and commemorations still to come`,

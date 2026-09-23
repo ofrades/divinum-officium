@@ -5,6 +5,8 @@ export interface TextSource {
   read(path: string): Promise<string | null>;
 }
 
+import { processConditionalLines, vero, type ConditionContext } from "./conditional";
+
 /** Case-preserving lookup of `[Section]` bodies in a Divinum Officium data file. */
 export interface Section {
   name: string;
@@ -12,15 +14,19 @@ export interface Section {
 }
 
 /** Parse a data file into its `[Section]`s, keeping the order and duplicates. */
-export function parseSections(text: string): Section[] {
+export function parseSections(text: string, context?: ConditionContext): Section[] {
   const sections: Section[] = [];
   let current: Section | null = null;
+  let skipping = false;
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.replace(/\s+$/, "");
-    const match = /^\[(.+?)\]\s*$/.exec(line);
+    // A section header may carry its own condition: `[Oratio] (rubrica 1960)`.
+    const match = /^\s*\[([^\]]+)\]\s*(?:\(([^)]*)\))?\s*$/.exec(line);
     if (match) {
-      current = { name: match[1], lines: [] };
-      sections.push(current);
+      const condition = match[2] ?? "";
+      skipping = context !== undefined && condition !== "" && !vero(condition, context);
+      current = skipping ? null : { name: match[1], lines: [] };
+      if (current) sections.push(current);
       continue;
     }
     if (current) current.lines.push(line);
@@ -51,82 +57,84 @@ export function sectionBody(sections: Section[], name: string): string[] | null 
  * rubrics, `dicuntur` keeps it. Anything more exotic is reported, not guessed.
  */
 export interface ScriptItem {
-  kind: "section" | "text" | "ref" | "break" | "note" | "unsupported";
+  kind: "section" | "text" | "ref" | "break" | "rubricNote";
   /** section name, reference name, or the line itself */
   value: string;
   sigil?: "$" | "&";
 }
 
-const RUBRIC_TOKEN = /rubrica\s+([^\s)]+)/i;
-
-/** Which rubrics a condition token refers to. 1960 is "196" and "1960". */
-export function tokenMatchesVersion(token: string, version: string): boolean {
-  const wanted = token.toLowerCase().replace(/^\^/, "");
-  const current = version.toLowerCase();
-  if (wanted === "196" || wanted === "1960") return /196/.test(current);
-  if (wanted === "1955") return /1955|19(6|5)/.test(current);
-  if (wanted === "monastic") return /monastic/.test(current);
-  if (wanted === "cisterciensis") return /cistercien/.test(current);
-  if (wanted === "praedicatorum") return /praedicator/.test(current);
-  if (wanted === "altovadensis") return /altovaden/.test(current);
-  if (wanted === "1617" || wanted === "1930" || wanted === "1951") return current.includes(wanted);
-  return false;
-}
-
-function parse(script: string, version: string): ScriptItem[] {
+/**
+ * The Ordinarium script, tokenised. Conditions are resolved first by the
+ * engine's own processor (src/conditional.ts), so what is left is structure:
+ * `#Sections`, `$` / `&` references, `$rubrica` notes, plain text and `_`.
+ */
+function tokenise(lines: string[]): ScriptItem[] {
   const items: ScriptItem[] = [];
-  const lines = script.split(/\r?\n/);
-
-  for (let index = 0; index < lines.length; index++) {
-    const line = lines[index].replace(/\s+$/, "");
-    const trimmed = line.trim();
-
-    if (trimmed === "") continue;
-    if (trimmed.startsWith("#")) {
-      items.push({ kind: "section", value: trimmed.slice(1).trim() });
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (line === "") continue;
+    if (line.startsWith("#")) {
+      items.push({ kind: "section", value: line.slice(1).trim() });
       continue;
     }
-    if (trimmed === "_") {
+    if (line === "_") {
       items.push({ kind: "break", value: "" });
       continue;
     }
-    if (trimmed.startsWith("(") || trimmed.startsWith("[")) {
-      // A note that governs what follows. `omittuntur` drops the block for
-      // rubrics it names; everything else leaves the block in place.
-      const token = RUBRIC_TOKEN.exec(trimmed)?.[1] ?? "";
-      const drops = /omittitur|omittuntur/i.test(trimmed) && tokenMatchesVersion(token, version);
-      items.push({ kind: "note", value: trimmed });
-      if (!drops) continue;
-      // Skip the governed block: the following lines until a blank line or a
-      // section marker.
-      let cursor = index + 1;
-      while (cursor < lines.length) {
-        const next = lines[cursor];
-        if (next.trim() === "" || next.trim().startsWith("#")) break;
-        cursor++;
-      }
-      index = cursor - 1;
+    if (/^\$rubrica\b/i.test(line)) {
+      items.push({ kind: "rubricNote", value: line.replace(/^\$rubrica\s*/i, "").trim() });
       continue;
     }
-    const ref = /^([$&])(.+)$/.exec(trimmed);
+    const ref = /^([$&])(.+)$/.exec(line);
     if (ref) {
       items.push({ kind: "ref", value: ref[2].trim(), sigil: ref[1] as "$" | "&" });
       continue;
     }
-    if (trimmed.startsWith("$rubrica")) {
-      items.push({ kind: "unsupported", value: trimmed });
-      continue;
-    }
-    items.push({ kind: "text", value: trimmed });
+    items.push({ kind: "text", value: line });
   }
   return items;
 }
 
-export function parseScript(script: string, version: string, hour: string): ScriptItem[] {
-  return parse(hour === "Vesperae" ? script.replace(/Vesperae/g, "Vespera") : script, version);
+export function parseScript(script: string, context: ConditionContext): ScriptItem[] {
+  const hour = context.hour === "Vesperae" ? "Vespera" : context.hour;
+  return tokenise(processConditionalLines(script.split(/\r?\n/), { ...context, hour }));
 }
 
-/** The sections a script declares, in order — the shape of the rendered hour. */
-export function scriptSections(items: ScriptItem[]): string[] {
-  return items.filter((item) => item.kind === "section").map((item) => item.value);
+/**
+ * The sections a script renders, in order.
+ *
+ * A section with no content is not rendered at all: the Ordinarium declares
+ * `#Preces Feriales` and then suppresses its lines for most rubrics, and the
+ * engine prints nothing — no label, no empty block. That is why this looks at
+ * what a section actually holds rather than at its markers.
+ */
+export interface ScriptSection {
+  label: string;
+  /** Whether anything in the script fills this section. */
+  hasContent: boolean;
 }
+
+/**
+ * The sections a script declares, in order, and whether each has content.
+ *
+ * `hasContent` matters because the two kinds of empty section are not alike:
+ * `#Hymnus` and `#Psalmi` are filled by convention from the day's file and the
+ * psalterium, while `#Preces Feriales` is filled from tables only when the day
+ * calls for it. The caller decides what to do with each.
+ */
+export function scriptSections(items: ScriptItem[]): ScriptSection[] {
+  const sections: ScriptSection[] = [];
+  let current: ScriptSection | null = null;
+  for (const item of items) {
+    if (item.kind === "section") {
+      current = { label: item.value, hasContent: false };
+      sections.push(current);
+      continue;
+    }
+    if (current !== null && (item.kind === "ref" || item.kind === "text" || item.kind === "rubricNote")) {
+      current.hasContent = true;
+    }
+  }
+  return sections;
+}
+
