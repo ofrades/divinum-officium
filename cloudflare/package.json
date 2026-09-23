@@ -10,7 +10,8 @@
     "dev": "alchemy dev",
     "deploy": "alchemy deploy --yes",
     "deploy:prod": "alchemy deploy --stage prod --yes",
-    "destroy": "alchemy destroy"
+    "destroy": "alchemy destroy",
+    "parity": "bun tools/parity.ts"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",
