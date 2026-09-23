@@ -1,6 +1,6 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
-import { littleChapter } from "./chapter";
+import { littleChapter, minorOratio } from "./chapter";
 import { psalmodyRows } from "./psalterium";
 import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
@@ -230,7 +230,15 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
           continue;
         }
       }
-      // The hymn of a little hour lives in the hour's own Special file.
+      // The Oratio of a little hour is generated: versicles, the day's collect.
+      if (/^Oratio/i.test(block.label) && /^(Tertia|Sexta|Nona)$/.test(hour)) {
+        const oratio = await minorOratio(request.source, language, request.selection, context, renderContext);
+        if (oratio) {
+          columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines: oratio });
+          continue;
+        }
+      }
+      // The hymn of a little hour lives in the hour's Special file.
       const isHymn = /^Hymnus/i.test(block.label);
       let lines: OfficeLine[] = [];
       if (isHymn && /^(Prima|Tertia|Sexta|Nona)$/.test(hour)) {

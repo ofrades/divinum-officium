@@ -1,6 +1,6 @@
 import type { ConditionContext } from "./conditional";
 import { renderBody, type RenderContext } from "./render";
-import { specialBody } from "./special";
+import { specialBody, specialFileName } from "./special";
 import { resolveSection } from "./texts";
 import type { OfficeLine } from "./office";
 import type { TextSource } from "./script";
@@ -32,13 +32,14 @@ export async function littleChapter(
   // `Minor Special.txt`, keyed by day class and hour; Prime keeps its own (and
   // under the 1960 rubrics always takes `[Dominica]`).
   const dayClass = weekday === 0 ? "Dominica" : "Feria";
-  const chapterFile = hour === "Prima" ? undefined : "Minor Special.txt";
+  const chapterFile = specialFileName(hour);
   const chapterNames =
     hour === "Prima"
       ? ["Dominica"]
       : [`${dayClass} ${hour}`, `${season} ${hour}`, `Dominica ${hour}`, `Feria ${hour}`];
   const chapter = await specialBody(source, lang, hour, chapterNames, context, chapterFile);
   if (chapter === null) return null;
+  const minorChapter = chapter;
   lines.push(...renderBody(chapter, render));
   const thanks = await resolveSection({ name: "Deo gratias", lang, source, context });
   if (thanks) lines.push(...renderBody(thanks, render));
@@ -61,7 +62,7 @@ export async function littleChapter(
   return lines;
 }
 
-/** Resolve the `&`-references a body leans on (`&Gloria1`). */
+/** Resolve the references a body leans on (`&Gloria1`, `$Deo gratias`). */
 async function expandReferences(
   body: string[],
   source: TextSource,
@@ -70,7 +71,7 @@ async function expandReferences(
 ): Promise<string[]> {
   const out: string[] = [];
   for (const line of body) {
-    const reference = /^&\s*(.+)$/.exec(line.trim());
+    const reference = /^[$&]\s*(.+)$/.exec(line.trim());
     if (!reference) {
       out.push(line);
       continue;
@@ -80,4 +81,30 @@ async function expandReferences(
     else out.push(line);
   }
   return out;
+}
+
+/**
+ * The Oratio of a little hour. Its Ordinarium block is empty because the engine
+ * generates it: the versicles, `Orémus.`, then the day's own collect — taken
+ * from the winning file — and `Per Dóminum`.
+ */
+export async function minorOratio(
+  source: TextSource,
+  lang: string,
+  request: { winner: string },
+  context: ConditionContext,
+  render: RenderContext,
+): Promise<OfficeLine[] | null> {
+  const dayFile = request.winner === "" ? undefined : `horas/${lang}/${request.winner}`;
+  const [versicles, oremus, collect, perDominum] = await Promise.all([
+    resolveSection({ name: "Dominus", lang, source, context }),
+    resolveSection({ name: "Oremus", lang, source, context }),
+    resolveSection({ name: "Oratio", lang, source, context, dayFile }),
+    resolveSection({ name: "Per Dominum", lang, source, context }),
+  ]);
+  if (collect === null) return null;
+  return renderBody(
+    [...(versicles ?? []).slice(2, 4), ...(oremus ?? []), ...collect, ...(perDominum ?? [])],
+    render,
+  );
 }
