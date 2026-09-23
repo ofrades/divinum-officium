@@ -10,9 +10,15 @@ request; this artifact is the map, not the territory.
 It patches a **copy** of the engine (a few lines, in a temporary directory), so
 the checkout in the repository stays pristine and upstream stays upstream.
 
+Each rite keeps its own selection, because the missal has its own precedence:
+the office's winner is not always the Mass's. The same patch is applied to the
+rite's entry point (both call `precedence()` the same way) and the same
+selection is dumped.
+
 Usage:
   tools/build_calendar.py --repo ~/divinum-officium --perl-lib ~/perl-local/lib/perl5 \
       --version "Rubrics 1960 - 1960" --years 2026,2027 --out .assets/calendar
+  tools/build_calendar.py --rite mass --out .assets/calendar-mass ...
 """
 
 from __future__ import annotations
@@ -29,7 +35,13 @@ import tempfile
 
 DUMP_PARAM = "dumpordo"
 
-PATCH_ANCHOR = "precedence($date1);    #fills our hashes et variables"
+# Both rites reach their selection through the same call, spelled the same way.
+PATCH_ANCHOR = "precedence();    #fills our hashes et variables"
+
+RITES = {
+    "office": {"dir": ("horas", "Pofficium.pl"), "command": "prayPrima"},
+    "mass": {"dir": ("missa", "missa.pl"), "command": "pray"},
+}
 
 PATCH = """
 # --- dumpordo: build-time only, added by the API's calendar builder ---------
@@ -57,6 +69,9 @@ if (strictparam('dumpordo')) {
     titles      => [@dayname],
   );
   print "Content-type: application/json; charset=utf-8\\n\\n";
+  # A sentinel: the missal prints Set-Cookie headers before any content, so the
+  # caller looks for this rather than for the first blank line.
+  print "ORDOJSON\\n";
   # No `utf8` layer: the engine's strings already are UTF-8 bytes.
   print JSON::PP->new->canonical->encode(\\%dump);
   exit;
@@ -69,32 +84,33 @@ def slug(value: str) -> str:
     return re.sub(r"-+", "-", "".join(ch if ch.isalnum() else "-" for ch in value.lower())).strip("-")
 
 
-def prepare_engine(repo: str, workdir: str) -> str:
+def prepare_engine(repo: str, workdir: str, rite: str) -> str:
     cgi = os.path.join(repo, "web", "cgi-bin")
     www = os.path.join(repo, "web", "www")
     if not os.path.isdir(cgi) or not os.path.isdir(www):
         raise SystemExit(f"{repo} does not look like a Divinum Officium checkout")
     shutil.copytree(cgi, os.path.join(workdir, "web", "cgi-bin"))
     os.symlink(www, os.path.join(workdir, "web", "www"))
-    entry = os.path.join(workdir, "web", "cgi-bin", "horas", "officium.pl")
+    entry = os.path.join(workdir, "web", "cgi-bin", *RITES[rite]["dir"])
     raw = open(entry, encoding="utf-8", errors="replace").read()
     if PATCH_ANCHOR not in raw:
-        raise SystemExit("the engine moved: `precedence($date1);` not found in officium.pl")
+        raise SystemExit(f"the engine moved: `precedence();` not found in {RITES[rite]['dir'][1]}")
     open(entry, "w", encoding="utf-8").write(raw.replace(PATCH_ANCHOR, PATCH_ANCHOR + PATCH, 1))
-    return os.path.join(workdir, "web", "cgi-bin", "horas")
+    return os.path.dirname(entry)
 
 
-def one_day(horas_dir: str, perl_lib: str, version: str, day: str) -> dict:
+def one_day(horas_dir: str, perl_lib: str, version: str, day: str, rite: str) -> dict:
     env = dict(os.environ)
     env["PERL5LIB"] = perl_lib + (":" + env["PERL5LIB"] if env.get("PERL5LIB") else "")
     result = subprocess.run(
         [
-            "perl", "Pofficium.pl",
-            "command=prayPrima",
+            "perl", RITES[rite]["dir"][1],
+            f"command={RITES[rite]['command']}",
             f"date1={day.strftime('%m-%d-%Y')}",
             f"version={version}",
             "lang1=Latin",
             "lang2=Latin",
+            "content=1",
             DUMP_PARAM + "=1",
         ],
         cwd=horas_dir,
@@ -103,10 +119,10 @@ def one_day(horas_dir: str, perl_lib: str, version: str, day: str) -> dict:
         env=env,
     )
     output = result.stdout.decode("utf-8", "replace")
-    marker = output.find("\n\n")
+    marker = output.find("ORDOJSON")
     if marker < 0:
         raise RuntimeError(result.stderr.decode("utf-8", "replace")[:200] or "no output")
-    payload = json.loads(output[marker + 2 :])
+    payload = json.loads(output[marker + len("ORDOJSON") :])
 
     def iso(value: str) -> str:
         match = re.match(r"^(\d{2})-(\d{2})-(\d{4})$", text(value))
@@ -142,6 +158,7 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", required=True)
     parser.add_argument("--perl-lib", required=True)
+    parser.add_argument("--rite", choices=sorted(RITES), default="office")
     parser.add_argument("--version", default="Rubrics 1960 - 1960")
     parser.add_argument("--years", default=str(date.today().year))
     parser.add_argument("--out", default=".assets/calendar")
@@ -152,7 +169,7 @@ def main(argv: list[str]) -> int:
     os.makedirs(args.out, exist_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="ordo-engine-") as workdir:
-        horas = prepare_engine(args.repo, workdir)
+        horas = prepare_engine(args.repo, workdir, args.rite)
         for year in years:
             days = []
             day = date(year, 1, 1)
@@ -163,7 +180,7 @@ def main(argv: list[str]) -> int:
             selection = {}
             failures = []
             with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-                futures = {pool.submit(one_day, horas, args.perl_lib, args.version, d): d for d in days}
+                futures = {pool.submit(one_day, horas, args.perl_lib, args.version, d, args.rite): d for d in days}
                 for future in concurrent.futures.as_completed(futures):
                     try:
                         record = future.result()
@@ -176,6 +193,7 @@ def main(argv: list[str]) -> int:
             with open(path, "w", encoding="utf-8") as handle:
                 json.dump(
                     {
+                        "rite": args.rite,
                         "version": args.version,
                         "year": year,
                         "generatedBy": "divinum-officium engine (precedence)",
@@ -194,7 +212,7 @@ def main(argv: list[str]) -> int:
     # The API's /v1/index.json answers from this: which versions exist, and for
     # which years. Written last so a half-built run never advertises itself.
     index_path = os.path.join(args.out, "index.json")
-    index = {"generatedBy": "divinum-officium engine (precedence)", "versions": {}}
+    index = {"generatedBy": "divinum-officium engine (precedence)", "rite": args.rite, "versions": {}}
     for entry in sorted(os.listdir(args.out)):
         version_dir = os.path.join(args.out, entry)
         if not os.path.isdir(version_dir):
