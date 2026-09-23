@@ -12,7 +12,21 @@ reader / website ──▶ Access (service token) ──▶ Worker ──▶ ass
 ```
 
 Live at `https://divinumofficiumapi-api-live-ofrades-yj7tjxuyatwtb5ip.ofrades.workers.dev`,
-gated by Cloudflare Access (service tokens only — nothing answers without one).
+open for now: `curl` it, or open it in a browser, and the day's identity comes back.
+
+## Open, or closed
+
+```bash
+bun run deploy                       # open — anyone with the URL
+API_REQUIRE_AUTH=1 bun run deploy    # closed — Cloudflare Access, service tokens only
+```
+
+The door is a stack variable, not a rewrite: the Access application is attached
+only when `API_REQUIRE_AUTH=1`, and the service token (`PluginToken`) exists
+either way, so closing it later needs no new credential — the token printed
+above is already the one the readers will use. Close it before the API is
+announced; while it is open, the only thing between the texts and the world is
+not writing the URL down.
 
 ## Endpoints
 
