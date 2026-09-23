@@ -43,6 +43,8 @@ const MARKERS = /^(℣\.|℟\.|V\.|R\.|Ant\.|Benedictio\.|Absolutio\.|v\.|r\.)\s
 export function renderLine(raw: string, context: RenderContext): OfficeLine | null {
   let line = orthography(raw.trim(), context.version);
   if (line === "") return null;
+  // `_` is the engine's "no break here" mark: notation, never text.
+  if (line === "_") return null;
 
   // The mediant star and the flexa are kept as they stand: they are how the
   // psalm is pointed, and the reader shows them.

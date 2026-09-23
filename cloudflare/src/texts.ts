@@ -9,6 +9,8 @@ import { parseSections, sectionBody, type TextSource } from "./script";
 export interface LookupRequest {
   name: string;
   lang: string;
+  /** A specific data file to read, when a directive names one. */
+  file?: string;
   /** The day's own file, relative to web/www (e.g. `horas/Latin/Tempora/Pent17-3.txt`). */
   dayFile?: string;
   source: TextSource;
@@ -55,13 +57,80 @@ const SCRIPT_FUNCTIONS: Record<string, ScriptFunction> = {
   mlitany: async () => [],
 };
 
+// `@` directives: a section may not hold text but an *inclusion* of another
+// section, optionally narrowed to a line range and rewritten (`@:Name:1-2
+// s/\+ //`). The engine's InclusionRegex and do_inclusion_substitutions.
+const INCLUSION = /^\s*@([^\n:]+)?(?::([^\n:]+?))?[^\S\n\r]*(?::(.*))?$/;
+
+export interface Inclusion {
+  file?: string;
+  section?: string;
+  substitutions?: string;
+}
+
+export function parseInclusion(line: string): Inclusion | null {
+  const match = INCLUSION.exec(line);
+  if (!match) return null;
+  return { file: match[1]?.trim(), section: match[2]?.trim(), substitutions: match[3]?.trim() };
+}
+
+/** `1-2` selects lines (1-based); `!1-2` deletes them; `s/…/…/flags` rewrites. */
+export function applySubstitutions(lines: string[], substitutions: string): string[] {
+  let out = [...lines];
+  const pattern = /s\/([^/]*)\/([^/]*)\/([gims]*)|(!?)(\d+)(?:-(\d+))?/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(substitutions)) !== null) {
+    if (match[4]) {
+      const start = parseInt(match[4], 10) - 1;
+      const end = match[5] ? parseInt(match[5], 10) : start + 1;
+      const slice = out.slice(start, end);
+      out = match[3] ? out.filter((_, index) => index < start || index >= end) : slice;
+      continue;
+    }
+    if (match[1] !== undefined) {
+      const flags = match[3].includes("g") ? "g" : "";
+      const expression = new RegExp(match[1], flags + (match[3].includes("i") ? "i" : ""));
+      out = out.map((line) => line.replace(expression, match![2]));
+    }
+  }
+  return out;
+}
+
+/**
+ * Resolve `@` inclusions line by line, as `setupstring` does: a body may be one
+ * inclusion, three of them (`[Deus in adjutorium iij]`), or text with an
+ * inclusion somewhere in the middle.
+ */
+async function resolveInclusions(body: string[], request: LookupRequest, depth = 0): Promise<string[]> {
+  if (depth > 5) return body;
+  const out: string[] = [];
+  for (const line of body) {
+    const inclusion = parseInclusion(line);
+    if (!inclusion || !inclusion.section) {
+      out.push(line);
+      continue;
+    }
+    const inner = await resolveSection(
+      { ...request, name: inclusion.section, file: inclusion.file ?? request.file },
+      depth + 1,
+    );
+    if (inner === null) {
+      out.push(line);
+      continue;
+    }
+    out.push(...(inclusion.substitutions ? applySubstitutions(inner, inclusion.substitutions) : inner));
+  }
+  return out;
+}
+
 /** The body of `[name]`, resolved through the language's tables. */
-export async function resolveSection(request: LookupRequest): Promise<string[] | null> {
+export async function resolveSection(request: LookupRequest, depth = 0): Promise<string[] | null> {
   // Script functions answer first, as the engine does.
   const fn = SCRIPT_FUNCTIONS[request.name.trim().toLowerCase()];
   if (fn) return fn(request);
 
   const paths = [
+    request.file ? filePath(request.lang, request.file) : undefined,
     request.dayFile,
     `horas/${request.lang}/Psalterium/Common/Prayers.txt`,
     "horas/Latin/Psalterium/Common/Prayers.txt",
@@ -73,8 +142,15 @@ export async function resolveSection(request: LookupRequest): Promise<string[] |
     const sections = parseSections(text, request.context);
     for (const name of normaliseName(request.name)) {
       const body = sectionBody(sections, name);
-      if (body !== null) return body;
+      if (body !== null) return resolveInclusions(body, request, depth);
     }
   }
   return null;
+}
+
+/** Where a directive's file name points, language first. */
+function filePath(lang: string, file: string): string {
+  const trimmed = file.trim();
+  if (trimmed.startsWith("horas/")) return trimmed;
+  return `horas/${lang}/${trimmed.endsWith(".txt") ? trimmed : `${trimmed}.txt`}`;
 }

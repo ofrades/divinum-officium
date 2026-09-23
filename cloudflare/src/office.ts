@@ -1,6 +1,7 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
 import { psalmodyRows } from "./psalterium";
+import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
 import { parseScript, scriptBlocks, scriptSections, type ScriptBlock, type TextSource } from "./script";
 import { resolveSection } from "./texts";
@@ -211,7 +212,14 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
 
     const columns: OfficeColumn[] = [];
     for (const language of languages) {
-      const lines = await resolveBlock(block, language, request, context, renderContext);
+      // The hymn of a little hour lives in the hour's own Special file.
+      const isHymn = /^Hymnus/i.test(block.label);
+      let lines: OfficeLine[] = [];
+      if (isHymn && /^(Prima|Tertia|Sexta|Nona)$/.test(hour)) {
+        const body = await specialBody(request.source, language, hour, [`Hymnus ${hour}`, "Hymnus"], context);
+        if (body) lines = renderBody(body, renderContext);
+      }
+      if (lines.length === 0) lines = await resolveBlock(block, language, request, context, renderContext);
       columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines });
     }
     sections.push({ columns });
