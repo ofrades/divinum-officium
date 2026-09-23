@@ -6,7 +6,7 @@ import { psalmodyRows } from "./psalterium";
 import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
 import { parseScript, scriptBlocks, scriptSections, type ScriptBlock, type TextSource } from "./script";
-import { resolveSection } from "./texts";
+import { resolveSection, rubricNote } from "./texts";
 
 // Assembling an hour: the day's identity comes from the calendar artifact, the
 // shape of the hour comes from its Ordinarium script, and the texts come from
@@ -117,6 +117,17 @@ async function resolveBlock(
         context,
       });
       if (body) lines.push(...renderBody(body, renderContext, /^alleluia/i.test(item.value)));
+      continue;
+    }
+    if (item.kind === "rubricNote") {
+      const note = await rubricNote({
+        name: item.value,
+        lang: language,
+        dayFile: dayFileFor(language, request.selection.winner),
+        source: request.source,
+        context,
+      });
+      if (note) lines.push(...renderBody(note, renderContext));
       continue;
     }
     if (item.kind === "text") {

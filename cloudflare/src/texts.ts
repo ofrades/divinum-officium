@@ -160,3 +160,33 @@ function filePath(lang: string, file: string): string {
   if (trimmed.startsWith("horas/")) return trimmed;
   return `horas/${lang}/${trimmed.endsWith(".txt") ? trimmed : `${trimmed}.txt`}`;
 }
+
+/**
+ * `$rubrica NAME` is not printed as written: the engine expands it out of the
+ * rubric table (`Psalterium/Common/Rubricae.txt`), where the text sits in a
+ * `/: … :/` marker and, in Latin, in guillemets the page does not show.
+ */
+export async function rubricNote(request: LookupRequest): Promise<string[] | null> {
+  const paths = [
+    `horas/${request.lang}/Psalterium/Common/Rubricae.txt`,
+    "horas/Latin/Psalterium/Common/Rubricae.txt",
+  ];
+  for (const path of paths) {
+    const text = await request.source.read(path);
+    if (text === null) continue;
+    const body = sectionBody(parseSections(text, request.context), request.name);
+    if (body === null) continue;
+    const cleaned = body
+      .map((line) =>
+        line
+          .replace(/^\/:/, "")
+          .replace(/:(\/)?$/, "")
+          .replace(/«\s?/g, "")
+          .replace(/\s?»/g, "")
+          .trim(),
+      )
+      .filter((line) => line !== "");
+    if (cleaned.length > 0) return cleaned;
+  }
+  return null;
+}
