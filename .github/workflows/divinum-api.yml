@@ -8,9 +8,9 @@ name: Divinum Officium API
 # the last job asks the same questions of upstream's engine, so a change there
 # is visible here before a reader ever sees it.
 #
-# Everything runs inside the image the API answers with, pinned by the same
-# digest the Dockerfile uses: the tests cannot pass in a friendlier Perl than
-# production's.
+# Both jobs run the tests inside the image the API answers with, pinned by the
+# same digest the Dockerfile uses: the tests cannot pass in a friendlier Perl
+# than production's.
 
 on:
   push:
@@ -48,13 +48,15 @@ jobs:
   upstream:
     name: what upstream's engine says now
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/divinumofficium/divinum-officium@sha256:e9646d9457e2b5e0f273d2fde087ffe596c3389a2605ce4e592d74f6fa0092d5
     steps:
+      # The fetch happens on the runner: the engine's image has no git, and it
+      # should not need one.
       - uses: actions/checkout@v4
       - name: Fetch upstream master
-        run: git clone --depth 1 https://github.com/divinumofficium/divinum-officium.git /tmp/upstream
-      - name: The same questions, of upstream
+        run: git clone --depth 1 https://github.com/divinumofficium/divinum-officium.git upstream
+      - name: The same questions, of upstream (in the API's own image)
         run: |
-          python3 cloudflare/tests/snapshot.py --repo /tmp/upstream --only 2026-09-23
-          python3 cloudflare/tests/snapshot.py --repo /tmp/upstream --sweep 2026 Laudes
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint python3 "$ENGINE_IMAGE" \
+            cloudflare/tests/snapshot.py --repo /repo/upstream --only 2026-09-23
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint python3 "$ENGINE_IMAGE" \
+            cloudflare/tests/snapshot.py --repo /repo/upstream --sweep 2026 Laudes
