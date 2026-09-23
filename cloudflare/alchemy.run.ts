@@ -35,7 +35,7 @@ export default Alchemy.Stack(
     });
 
     const apiRateLimit = Cloudflare.RateLimit("ApiRateLimit", {
-      namespaceId: "divinum-officium-api",
+      namespaceId: 1001,
       simple: { limit: 60, period: 60 },
     });
 
