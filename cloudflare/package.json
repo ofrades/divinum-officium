@@ -5,7 +5,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "assets": "python3 tools/sync_assets.py",
-    "calendar": "python3 tools/build_calendar.py --repo .. --years 2025,2026,2027",
+    "calendar": "python3 tools/build_calendar.py --repo .. --years 2025,2026,2027 && python3 tools/build_calendar.py --rite mass --repo .. --years 2025,2026,2027 --out .assets/calendar-mass",
     "build": "bun run assets && bun run calendar",
     "dev": "alchemy dev",
     "deploy": "alchemy deploy --yes",
