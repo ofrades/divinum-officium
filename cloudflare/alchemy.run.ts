@@ -48,8 +48,15 @@ export default Alchemy.Stack(
     // container warm so a request never waits for a cold start. Set it to 0 to
     // scale to zero and trade the first request's seconds for the bill.
     const engine = Cloudflare.Container<Engine>("Engine", {
-      dockerfile: "cloudflare/Dockerfile",
+      // The Dockerfile is read from this directory; the context is the
+      // repository root, so `COPY web` carries this fork's engine and texts.
+      dockerfile: "Dockerfile",
       context: "..",
+      // A stable application name: the physical one should not change with
+      // every deploy, or each one would leave the previous container behind.
+      name: "divinum-officium-engine",
+      // Lighter than standard-1, roomy for a Perl CGI: the engine peaks around
+      // 200 MB, and one warm instance keeps a request from paying a cold start.
       instanceType: "basic",
       instances: 1,
     });
