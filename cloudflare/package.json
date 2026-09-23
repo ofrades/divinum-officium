@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",
-    "alchemy": "^2.0.0-beta.79",
-    "effect": "^4.0.0-rc.117"
+    "effect": "^4.0.0-rc.111"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260923.1",
+    "@effect/platform-bun": "^4.0.0-rc.111",
+    "alchemy": "2.0.0-beta.79",
     "typescript": "^7.0.2"
   }
 }
