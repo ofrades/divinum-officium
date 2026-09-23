@@ -16,8 +16,9 @@ export async function specialBody(
   hour: string,
   names: string[],
   context: ConditionContext,
+  file?: string,
 ): Promise<string[] | null> {
-  const file = specialFileName(hour);
+  file = file ?? specialFileName(hour);
   for (const path of [`horas/${lang}/Psalterium/Special/${file}`, `horas/Latin/Psalterium/Special/${file}`]) {
     const text = await source.read(path);
     if (text === null) continue;

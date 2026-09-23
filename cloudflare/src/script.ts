@@ -31,6 +31,12 @@ export function parseSections(text: string, context?: ConditionContext): Section
     }
     if (current) current.lines.push(line);
   }
+  // A section's *body* carries conditions too, and the engine resolves them
+  // when it loads the file (`setupstring_parse_file`). Without this, lines like
+  // "(sed rubrica Ordo Praedicatorum dicitur)" would be printed as text.
+  if (context) {
+    for (const section of sections) section.lines = processConditionalLines(section.lines, context);
+  }
   return sections;
 }
 

@@ -1,5 +1,6 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
+import { littleChapter } from "./chapter";
 import { psalmodyRows } from "./psalterium";
 import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
@@ -212,6 +213,23 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
 
     const columns: OfficeColumn[] = [];
     for (const language of languages) {
+      // The little chapter, its responsory and the versicle are generated from
+      // the hour's Special file, not written in the Ordinarium.
+      if (/^Capitulum/i.test(block.label) && /^(Prima|Tertia|Sexta|Nona)$/.test(hour)) {
+        const chapter = await littleChapter(
+          request.source,
+          language,
+          hour,
+          context,
+          renderContext,
+          context.season,
+          weekday,
+        );
+        if (chapter) {
+          columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines: chapter });
+          continue;
+        }
+      }
       // The hymn of a little hour lives in the hour's own Special file.
       const isHymn = /^Hymnus/i.test(block.label);
       let lines: OfficeLine[] = [];

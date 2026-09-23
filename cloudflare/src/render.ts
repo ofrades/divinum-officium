@@ -34,7 +34,7 @@ export function fancy(text: string): string {
 
 const VERSE_NUMBER = /^([0-9]+[:.]\s*[0-9]+)\s+(.*)$/;
 const PSALM_TITLE = /^(Psalmus|Psalm|Canticum|Canticle)\s+((?:[0-9]+|[\p{Lu}][\p{Ll}]+).*)$/u;
-const MARKERS = /^(℣\.|℟\.|V\.|R\.|Ant\.|Benedictio\.|Absolutio\.|v\.|r\.)\s*(.*)$/;
+const MARKERS = /^(℣\.|℟\.|R\.br\.|V\.|R\.|Ant\.|Benedictio\.|Absolutio\.|v\.|r\.)\s*(.*)$/;
 
 /**
  * One source line to one classified line, or null when the line is notation
@@ -45,6 +45,12 @@ export function renderLine(raw: string, context: RenderContext): OfficeLine | nu
   if (line === "") return null;
   // `_` is the engine's "no break here" mark: notation, never text.
   if (line === "_") return null;
+  // `!` introduces a citation: the reference is the line, printed as a rubric
+  // with no text after it (`!1 Tim. 1:17`).
+  if (line.startsWith("!")) {
+    const reference = line.replace(/^!\s*/, "").trim();
+    return { k: "rubric", marker: reference, text: "" };
+  }
 
   // The mediant star and the flexa are kept as they stand: they are how the
   // psalm is pointed, and the reader shows them.
@@ -62,6 +68,9 @@ export function renderLine(raw: string, context: RenderContext): OfficeLine | nu
     // "Benedictio." and "Absolutio." introduce a spoken rubric, as Ant. does.
     if (token === "Benedictio." || token === "Absolutio.") {
       return { k: "rubric", marker: token, text: fancy(rest) };
+    }
+    if (token === "R.br.") {
+      return { k: "rubric", marker: "℟.br.", text: fancy(rest) };
     }
     line = rest;
   }
