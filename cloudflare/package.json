@@ -1,0 +1,21 @@
+{
+  "name": "divinum-officium-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "deploy": "alchemy deploy",
+    "deploy:prod": "alchemy deploy --stage prod",
+    "dev": "alchemy dev",
+    "destroy": "alchemy destroy"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.1.0",
+    "alchemy": "^2.0.0-beta.79",
+    "effect": "^4.0.0-rc.111"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260923.0",
+    "typescript": "^5.9.0"
+  }
+}
