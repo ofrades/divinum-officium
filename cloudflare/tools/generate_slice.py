@@ -17,8 +17,8 @@ Two engines are supported:
 Layout written under --out:
 
   index.json                                  slice metadata
-  office/<version>/<year>/<MM-DD>/<hour>-<lang1>-<lang2>.json
-  mass/<version>/<year>/<MM-DD>/<votive>-<form>-<lang1>-<lang2>.json
+  office/<version>/<calendar>/<year>/<MM-DD>/<hour>-<lang1>-<lang2>.json
+  mass/<version>/<calendar>/<year>/<MM-DD>/<votive>-<form>-<lang1>-<lang2>.json
 
 Usage:
   generate_slice.py --engine local --repo /srv/divinum-officium \
@@ -58,6 +58,18 @@ HOURS = [
     "Nona",
     "Vesperae",
     "Completorium",
+]
+
+CALENDARS = [
+    "Generale",
+    "Urbis",
+    "Monacensis",
+    "Passaviensis",
+    "Ratisbonensis",
+    "Spirensis",
+    "Brasilia",
+    "Ultrajectum",
+    "Groningen",
 ]
 
 # The missal's own versions list; anything else is mapped by the server.
@@ -134,6 +146,7 @@ def job_office(parser, args, engine, day: date, hour: str, runner):
         "date": day.isoformat(),
         "hour": hour,
         "version": args.version,
+        "calendar": args.calendar,
         "lang1": args.lang1,
         "lang2": args.lang2,
         "votive": "",
@@ -143,6 +156,7 @@ def job_office(parser, args, engine, day: date, hour: str, runner):
         "command": "pray" + hour,
         "date1": day.strftime("%m-%d-%Y"),
         "version": args.version,
+        "dioecesis": args.calendar,
         "lang1": args.lang1,
         "lang2": args.lang2,
         "content": "1",
@@ -151,6 +165,7 @@ def job_office(parser, args, engine, day: date, hour: str, runner):
         args.out,
         "office",
         version_slug(args.version),
+        args.calendar,
         str(day.year),
         day.strftime("%m-%d"),
         f"{hour.lower()}-{args.lang1.lower()}-{args.lang2.lower()}.json",
@@ -175,6 +190,7 @@ def job_mass(parser, args, engine, day: date, runner):
         "date": day.isoformat(),
         "hour": "",
         "version": args.version,
+        "calendar": args.calendar,
         "lang1": args.lang1,
         "lang2": args.lang2,
         "votive": args.votive,
@@ -184,6 +200,7 @@ def job_mass(parser, args, engine, day: date, runner):
         "command": "pray",
         "date1": day.strftime("%m-%d-%Y"),
         "version": args.version,
+        "dioecesis": args.calendar,
         "lang1": args.lang1,
         "lang2": args.lang2,
         "content": "1",
@@ -195,6 +212,7 @@ def job_mass(parser, args, engine, day: date, runner):
         args.out,
         "mass",
         version_slug(args.version),
+        args.calendar,
         str(day.year),
         day.strftime("%m-%d"),
         f"{args.votive.lower()}-{'propers' if args.propers else 'full'}-{args.lang1.lower()}-{args.lang2.lower()}.json",
@@ -227,6 +245,7 @@ def main(argv):
     parser_args.add_argument("--from", dest="start", required=True)
     parser_args.add_argument("--to", dest="end", required=True)
     parser_args.add_argument("--version", default="Rubrics 1960 - 1960")
+    parser_args.add_argument("--calendar", default="Generale", choices=CALENDARS)
     parser_args.add_argument("--lang1", default="Latin")
     parser_args.add_argument("--lang2", default="English")
     parser_args.add_argument("--hours", default=",".join(HOURS))
@@ -289,6 +308,7 @@ def main(argv):
         "generatedAt": datetime.utcnow().isoformat(timespec="seconds") + "Z",
         "source": args.base_url if args.engine == "http" else "divinum-officium (local engine)",
         "version": args.version,
+        "calendar": args.calendar,
         "lang1": args.lang1,
         "lang2": args.lang2,
         "from": start.isoformat(),

@@ -1,6 +1,16 @@
 import { Container, getContainer } from "@cloudflare/containers";
 import { SITE_HTML } from "./site";
-import { VERSIONS, normalizeVersion, slug } from "./versions";
+import {
+  CALENDARS,
+  HOURS,
+  LANGUAGES,
+  MASS_FORMS,
+  VERSIONS,
+  VOTIVES,
+  normalizeCalendar,
+  normalizeVersion,
+  slug,
+} from "./versions";
 
 // The API surface, and the reader that uses it.
 //
@@ -48,6 +58,11 @@ export default {
         versions: Object.fromEntries(
           VERSIONS.map((version) => [slug(version), { version, years: [] as number[] }]),
         ),
+        calendars: CALENDARS,
+        languages: LANGUAGES,
+        votives: VOTIVES,
+        massForms: MASS_FORMS,
+        hours: HOURS,
       });
     }
 
@@ -55,6 +70,9 @@ export default {
       // The engine hears one of its own version names, never a near miss.
       const target = new URL(request.url);
       target.searchParams.set("version", normalizeVersion(target.searchParams.get("version")));
+      const calendar = target.searchParams.get("calendar") || target.searchParams.get("dioecesis");
+      target.searchParams.set("dioecesis", normalizeCalendar(calendar));
+      target.searchParams.delete("calendar");
       return getContainer(env.Engine, "engine").fetch(
         new Request(target.toString(), { method: request.method, headers: request.headers }),
       );

@@ -16,9 +16,9 @@ upstream Perl image, which carries python3 for exactly this reason.
 Routes:
 
   GET /health
-  GET /v1/day/<YYYY-MM-DD>?version=&lang1=&lang2=
-  GET /v1/office/<YYYY-MM-DD>/<Hour>?version=&lang1=&lang2=
-  GET /v1/mass/<YYYY-MM-DD>?version=&lang1=&lang2=&votive=&propers=1
+  GET /v1/day/<YYYY-MM-DD>?version=&calendar=&lang1=&lang2=
+  GET /v1/office/<YYYY-MM-DD>/<Hour>?version=&calendar=&lang1=&lang2=
+  GET /v1/mass/<YYYY-MM-DD>?version=&calendar=&lang1=&lang2=&votive=&propers=1
 
 The snapshot suite (tests/snapshot.py) drives the same `Engine.office`,
 `Engine.mass` and `Engine.day` calls, so the tests pin the API's contract
@@ -56,12 +56,35 @@ RITES = {
 }
 
 DEFAULT_VERSION = "Rubrics 1960 - 1960"
+DEFAULT_CALENDAR = "Generale"
 DEFAULT_LANG1 = "Latin"
 DEFAULT_LANG2 = "English"
+
+CALENDARS = (
+    "Generale",
+    "Urbis",
+    "Monacensis",
+    "Passaviensis",
+    "Ratisbonensis",
+    "Spirensis",
+    "Brasilia",
+    "Ultrajectum",
+    "Groningen",
+)
 
 # The hour the day itself is read from: cheapest, and it carries the day's
 # headline and colour like any other.
 DAY_HOUR = "Tertia"
+
+
+def normalize_calendar(value: str | None) -> str:
+    wanted = (value or "").strip()
+    if not wanted:
+        return DEFAULT_CALENDAR
+    for calendar in CALENDARS:
+        if calendar.lower() == wanted.lower():
+            return calendar
+    return DEFAULT_CALENDAR
 
 
 def load_parser(path: str):
@@ -131,7 +154,9 @@ class Engine:
         version: str = DEFAULT_VERSION,
         lang1: str = DEFAULT_LANG1,
         lang2: str = DEFAULT_LANG2,
+        calendar: str = DEFAULT_CALENDAR,
     ) -> dict:
+        calendar = normalize_calendar(calendar)
         return self.payload(
             "office",
             {
@@ -140,6 +165,7 @@ class Engine:
                 "date": date.strftime("%Y-%m-%d"),
                 "hour": hour,
                 "version": version,
+                "calendar": calendar,
                 "lang1": lang1,
                 "lang2": lang2,
                 "votive": "",
@@ -149,6 +175,7 @@ class Engine:
                 "command": "pray" + hour,
                 "date1": date.strftime("%m-%d-%Y"),
                 "version": version,
+                "dioecesis": calendar,
                 "lang1": lang1,
                 "lang2": lang2,
                 "content": "1",
@@ -163,11 +190,14 @@ class Engine:
         lang2: str = DEFAULT_LANG2,
         votive: str = "Hodie",
         propers: bool = False,
+        calendar: str = DEFAULT_CALENDAR,
     ) -> dict:
+        calendar = normalize_calendar(calendar)
         params = {
             "command": "pray",
             "date1": date.strftime("%m-%d-%Y"),
             "version": version,
+            "dioecesis": calendar,
             "lang1": lang1,
             "lang2": lang2,
             "content": "1",
@@ -183,6 +213,7 @@ class Engine:
                 "date": date.strftime("%Y-%m-%d"),
                 "hour": "",
                 "version": version,
+                "calendar": calendar,
                 "lang1": lang1,
                 "lang2": lang2,
                 "votive": votive,
@@ -200,12 +231,15 @@ class Engine:
         version: str = DEFAULT_VERSION,
         lang1: str = DEFAULT_LANG1,
         lang2: str = DEFAULT_LANG2,
+        calendar: str = DEFAULT_CALENDAR,
     ) -> dict:
-        payload = self.office(date, DAY_HOUR, version, lang1, lang2)
+        calendar = normalize_calendar(calendar)
+        payload = self.office(date, DAY_HOUR, version, lang1, lang2, calendar)
         return {
             "ok": bool(payload.get("sections")),
             "date": payload.get("date"),
             "version": version,
+            "calendar": calendar,
             "headline": payload.get("title"),
             "colourKey": payload.get("colorKey"),
             "colourName": payload.get("colorName"),
@@ -268,15 +302,24 @@ class Handler(BaseHTTPRequestHandler):
     def route(self) -> None:
         query = self.query()
         version = query.get("version") or DEFAULT_VERSION
+        calendar = normalize_calendar(query.get("calendar") or query.get("dioecesis"))
         lang1 = query.get("lang1") or DEFAULT_LANG1
         lang2 = query.get("lang2") or DEFAULT_LANG2
 
         if self.parts == ["health"]:
-            self.send_json(200, {"ok": True, "engine": self.engine.repo, "hours": HOURS})
+            self.send_json(
+                200,
+                {
+                    "ok": True,
+                    "engine": self.engine.repo,
+                    "hours": HOURS,
+                    "calendars": list(CALENDARS),
+                },
+            )
             return
 
         if len(self.parts) == 3 and self.parts[:2] == ["v1", "day"]:
-            self.send_json(200, self.engine.day(parse_date(self.parts[2]), version, lang1, lang2))
+            self.send_json(200, self.engine.day(parse_date(self.parts[2]), version, lang1, lang2, calendar))
             return
 
         if len(self.parts) == 4 and self.parts[:2] == ["v1", "office"]:
@@ -285,7 +328,7 @@ class Handler(BaseHTTPRequestHandler):
             if hour is None:
                 self.send_json(404, {"ok": False, "error": f"unknown hour: {self.parts[3]}"})
                 return
-            self.ask(self.engine.office(date, hour, version, lang1, lang2))
+            self.ask(self.engine.office(date, hour, version, lang1, lang2, calendar))
             return
 
         if len(self.parts) == 3 and self.parts[:2] == ["v1", "mass"]:
@@ -297,6 +340,7 @@ class Handler(BaseHTTPRequestHandler):
                     lang2,
                     query.get("votive") or "Hodie",
                     query.get("propers") in ("1", "true", "yes"),
+                    calendar,
                 )
             )
             return

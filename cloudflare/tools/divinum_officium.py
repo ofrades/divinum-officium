@@ -15,7 +15,8 @@ Only the Python standard library is used.
 
 Usage:
   divinum_officium.py office --date 2026-09-23 --hour Prima \
-      --version "Rubrics 1960 - 1960" --lang1 Latin --lang2 English \
+      --version "Rubrics 1960 - 1960" --calendar Generale \
+      --lang1 Latin --lang2 English \
       [--base-url https://divinumofficium.hu] [--ttl 21600] [--refresh]
   divinum_officium.py mass --date 2026-09-23 [--votive C9] [--propers] \
       [--version "Rubrics 1960 - 1960"] [--lang1 Latin] [--lang2 English]
@@ -42,6 +43,7 @@ import urllib.request
 VERSION = "0.1.0"
 DEFAULT_BASE_URL = "https://divinumofficium.hu"
 DEFAULT_TTL = 6 * 3600
+DEFAULT_CALENDAR = "Generale"
 # robots.txt on the public mirrors asks for Crawl-delay: 10.
 CRAWL_DELAY_SECONDS = 10
 
@@ -61,6 +63,28 @@ HOURS = [
     "Vesperae",
     "Completorium",
 ]
+
+CALENDARS = (
+    "Generale",
+    "Urbis",
+    "Monacensis",
+    "Passaviensis",
+    "Ratisbonensis",
+    "Spirensis",
+    "Brasilia",
+    "Ultrajectum",
+    "Groningen",
+)
+
+
+def normalize_calendar(value: str | None) -> str:
+    wanted = (value or "").strip()
+    if not wanted:
+        return DEFAULT_CALENDAR
+    for calendar in CALENDARS:
+        if calendar.lower() == wanted.lower():
+            return calendar
+    return DEFAULT_CALENDAR
 
 # Divinum Officium paints the day title with one of these names. "black" is the
 # Roman "white or ferial" class (setfont omits COLOR for it), "grey" is the real
@@ -131,6 +155,7 @@ def rite_params(rite: str, args: argparse.Namespace, date_iso: str) -> dict:
     params = {
         "date1": iso_to_do_date(date_iso),
         "version": args.version,
+        "dioecesis": normalize_calendar(getattr(args, "calendar", DEFAULT_CALENDAR)),
         "lang1": args.lang1,
         "lang2": args.lang2,
         "content": "1",
@@ -420,6 +445,29 @@ def fetch(
         return response.read().decode("utf-8", errors="replace")
 
 
+def api_url_for(base_url: str, rite: str, date_iso: str, hour: str) -> str:
+    """The API's own route for a rite — it answers with the reader's payload."""
+    if rite == "mass":
+        return f"{base_url.rstrip('/')}/v1/mass/{date_iso}"
+    return f"{base_url.rstrip('/')}/v1/office/{date_iso}/{hour}"
+
+
+def fetch_api(url: str, params: dict, timeout: int = 45) -> dict:
+    """Ask the API for a payload; it is already in the reader's own shape."""
+    request = urllib.request.Request(
+        url + "?" + urllib.parse.urlencode(params),
+        headers={
+            "User-Agent": (
+                "omarchy-divinum-officium/" + VERSION + " "
+                "(+https://github.com/ofrades/omarchy-divinum-officium)"
+            ),
+            "Accept": "application/json",
+        },
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8", errors="replace"))
+
+
 def cache_key(meta: dict) -> str:
     material = "|".join(
         str(meta.get(key, ""))
@@ -429,6 +477,7 @@ def cache_key(meta: dict) -> str:
             "date",
             "hour",
             "version",
+            "calendar",
             "lang1",
             "lang2",
             "votive",
@@ -460,7 +509,12 @@ def office(args: argparse.Namespace) -> dict:
     # A private API answers the same CGI paths and takes Access service-token
     # headers; a public server takes neither.
     api_url = (getattr(args, "api_url", "") or "").strip()
-    base_url = api_url.rstrip("/") if api_url else args.base_url.rstrip("/")
+    mirror_url = args.base_url.rstrip("/")
+    api_hours = [h.strip() for h in (getattr(args, "api_hours", "") or "").split(",") if h.strip()]
+    api_serves_hour = bool(api_url) and (
+        not api_hours or rite == "mass" or getattr(args, "hour", "") in api_hours
+    )
+    base_url = api_url.rstrip("/") if api_serves_hour else mirror_url
     api_headers = {}
     if api_url and getattr(args, "access_client_id", "") and getattr(args, "access_client_secret", ""):
         api_headers = {
@@ -474,6 +528,7 @@ def office(args: argparse.Namespace) -> dict:
         "date": date_iso,
         "hour": getattr(args, "hour", "") if rite == "office" else "",
         "version": args.version,
+        "calendar": normalize_calendar(getattr(args, "calendar", DEFAULT_CALENDAR)),
         "lang1": args.lang1,
         "lang2": args.lang2,
         "votive": getattr(args, "votive", "Hodie") if rite == "mass" else "",
@@ -490,10 +545,57 @@ def office(args: argparse.Namespace) -> dict:
             payload["stale"] = False
             return payload
 
+    if api_serves_hour:
+        try:
+            api_params = {
+                "version": args.version,
+                "calendar": meta["calendar"],
+                "lang1": args.lang1,
+                "lang2": args.lang2,
+            }
+            if rite == "mass":
+                votive = getattr(args, "votive", "") or "Hodie"
+                if votive != "Hodie":
+                    api_params["votive"] = votive
+                if getattr(args, "propers", False):
+                    api_params["propers"] = "1"
+            payload = fetch_api(
+                api_url_for(base_url, rite, date_iso, meta["hour"]),
+                api_params,
+            )
+            if payload.get("ok") is True:
+                payload["cached"] = False
+                payload["stale"] = False
+                payload["source"] = api_url
+                try:
+                    with open(path, "w") as handle:
+                        json.dump({"fetchedAt": time.time(), "payload": payload}, handle)
+                except OSError:
+                    pass
+                return payload
+            api_error = str(payload.get("error", "the API did not have this hour"))
+        except Exception as error:  # urllib raises a family of errors here
+            api_error = f"{api_url} unreachable: {error}"
+        args_dict = {"apiError": api_error}
+        # The public mirror is the fallback for a private API miss. Re-key the
+        # cache and metadata too, so a successful mirror response never shares
+        # a cache entry with the API response it replaced.
+        api_serves_hour = False
+        base_url = mirror_url
+        meta["baseUrl"] = base_url
+        path = os.path.join(cache, cache_key(meta))
+    else:
+        args_dict = {}
+
     params = rite_params(rite, args, date_iso)
     try:
         document = fetch(
-            base_url, rite, params, cache, headers=api_headers, delay=not api_url
+            base_url,
+            rite,
+            params,
+            cache,
+            headers=api_headers if api_serves_hour else None,
+            delay=not api_serves_hour,
         )
     except Exception as error:  # urllib raises a family of errors here
         payload, _ = read_cache(path, 0)
@@ -518,6 +620,8 @@ def office(args: argparse.Namespace) -> dict:
 
     payload = parse_payload(document, meta)
     payload["rite"] = rite
+    for key, value in args_dict.items():
+        payload[key] = value
     if not payload["hourTitle"]:
         payload["hourTitle"] = "Sancta Missa" if rite == "mass" else ""
     payload["cached"] = False
@@ -537,13 +641,15 @@ def add_source_args(parser: argparse.ArgumentParser, default_base: str) -> None:
     """The source options both rites share."""
     parser.add_argument("--base-url", default=default_base)
     parser.add_argument("--version", default="Rubrics 1960 - 1960")
+    parser.add_argument("--calendar", default=DEFAULT_CALENDAR, choices=CALENDARS)
     parser.add_argument("--lang1", default="Latin")
     parser.add_argument("--lang2", default="English")
     parser.add_argument("--ttl", type=int, default=DEFAULT_TTL)
     parser.add_argument("--refresh", action="store_true")
     # A private Divinum Officium API of one's own, e.g. from a Cloudflare
-    # Container: same CGI paths, Access service-token headers, no crawl delay.
+    # Container: the reader's JSON paths, Access service-token headers, no crawl delay.
     parser.add_argument("--api-url", default="")
+    parser.add_argument("--api-hours", default="", help="comma-separated hours the API serves well; empty means all")
     parser.add_argument("--access-client-id", default="")
     parser.add_argument("--access-client-secret", default="")
 

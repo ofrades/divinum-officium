@@ -3,12 +3,12 @@
 The engine answers. `service.py` runs the repository's own CGI — the same
 `Pofficium.pl` and `missa.pl` the website runs — and hands the resulting page to
 the reader's parser, so what comes back is exactly what the website would show,
-for any hour, the Mass, every version and every language.
+for any hour, the Mass, every version, calendar, votive, and language.
 
 Nothing is ported, pre-rendered or stored: every request runs the engine against
 the repository's files. The engine lives in a container built from this fork's
 own `web/` laid over the upstream image, and the Worker is the door in front of
-it — version in, JSON out.
+it — version, calendar, and language in; JSON out.
 
 ```
 reader / website ──▶ Access (service token) ──▶ Worker ──▶ container: Perl CGI + this repo's files
@@ -36,10 +36,10 @@ not writing the URL down.
 | Route | What it returns |
 | --- | --- |
 | `/health` | the engine, as the container sees itself |
-| `/v1/index.json` | the versions the website offers |
-| `/v1/day/<YYYY-MM-DD>?version=&lang1=&lang2=` | the day: headline, colour, commemorations |
-| `/v1/office/<YYYY-MM-DD>/<hour>?version=&lang1=&lang2=` | the hour's texts |
-| `/v1/mass/<YYYY-MM-DD>?version=&lang1=&lang2=&votive=&propers=1` | the Mass's texts |
+| `/v1/index.json` | rubrics, calendars, languages, votives, forms, and hours |
+| `/v1/day/<YYYY-MM-DD>?version=&calendar=&lang1=&lang2=` | the day: headline, colour, commemorations |
+| `/v1/office/<YYYY-MM-DD>/<hour>?version=&calendar=&lang1=&lang2=` | the hour's texts |
+| `/v1/mass/<YYYY-MM-DD>?version=&calendar=&lang1=&lang2=&votive=&propers=1` | the Mass's texts |
 
 ```bash
 curl -sS -H "CF-Access-Client-Id: $CLIENT_ID" -H "CF-Access-Client-Secret: $CLIENT_SECRET" \
@@ -48,9 +48,17 @@ curl -sS -H "CF-Access-Client-Id: $CLIENT_ID" -H "CF-Access-Client-Secret: $CLIE
 #  "colourKey":"purple","commemorations":["Commemoratio ad Laudes tantum: ..."], ...}
 ```
 
+`calendar` is the local calendar selector used by the engine's `dioecesis`
+parameter. The default is `Generale`; `/v1/index.json` lists the accepted
+values and display names. The older `dioecesis` query name is also accepted.
+
 The JSON is the same shape the Omarchy plugin and the reader page already
 consume, because it comes from the plugin's own parser (`tools/divinum_officium.py`,
 vendored); no reader needs to know an engine exists.
+
+The reader at `/` exposes the same choices as the plugin: Missa or Officium,
+canonical hour, rubrics, local calendar, two languages, votive Mass, and
+Propers versus Full Mass.
 
 ## Build and deploy
 
