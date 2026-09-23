@@ -7,7 +7,11 @@ export const SITE_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Divinum Officium</title>
 <style>
-  :root { --ink: #1c1a19; --dim: #6b6560; --line: #ddd7d0; --paper: #faf7f2; }
+  :root { color-scheme: light; --ink: #1c1a19; --dim: #6b6560; --line: #ddd7d0; --paper: #faf7f2; }
+  :root[data-theme="dark"] { color-scheme: dark; --ink: #eee9e1; --dim: #aaa198; --line: #4a4540; --paper: #171514; }
+  @media (prefers-color-scheme: dark) {
+    :root[data-theme="system"] { color-scheme: dark; --ink: #eee9e1; --dim: #aaa198; --line: #4a4540; --paper: #171514; }
+  }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink);
          font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -71,6 +75,11 @@ export const SITE_HTML = `<!doctype html>
     <label class="control">Calendar<select id="calendar"></select></label>
     <label class="control">Text<select id="lang1"></select></label>
     <label class="control">Second column<select id="lang2"></select></label>
+    <label class="control">Theme<select id="theme">
+      <option value="system">System</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select></label>
     <div class="mass-controls" id="massControls">
       <label class="control">Mass<select id="votive"></select></label>
       <div class="control">
@@ -96,13 +105,31 @@ const HOURS = ["Matutinum","Laudes","Prima","Tertia","Sexta","Nona","Vesperae","
 const state = {
   date: new Date().toISOString().slice(0,10), hour: "Prima", rite: "mass",
   version: "Rubrics 1960 - 1960", calendar: "Generale", lang1: "Latin", lang2: "English",
-  votive: "Hodie", propers: true, options: { versions: [], calendars: [], languages: [], votives: [] },
+  votive: "Hodie", propers: true, theme: "system",
+  options: { versions: [], calendars: [], languages: [], votives: [] },
   day: null
 };
 
 const $ = (id) => document.getElementById(id);
 const pad = (n) => String(n).padStart(2, "0");
 const iso = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+
+function storedTheme() {
+  try {
+    const value = localStorage.getItem("divinum-officium-theme");
+    return ["system", "light", "dark"].includes(value) ? value : "system";
+  } catch (_) {
+    return "system";
+  }
+}
+
+function applyTheme(value) {
+  const theme = ["system", "light", "dark"].includes(value) ? value : "system";
+  state.theme = theme;
+  document.documentElement.dataset.theme = theme;
+  $("theme").value = theme;
+  try { localStorage.setItem("divinum-officium-theme", theme); } catch (_) {}
+}
 
 function shift(days) {
   const d = new Date(state.date + "T12:00:00Z");
@@ -263,6 +290,7 @@ function controls() {
   $("calendar").onchange = (event) => { state.calendar = event.target.value; refresh(); };
   $("lang1").onchange = (event) => { state.lang1 = event.target.value; refresh(); };
   $("lang2").onchange = (event) => { state.lang2 = event.target.value === "None" ? state.lang1 : event.target.value; refresh(); };
+  $("theme").onchange = (event) => applyTheme(event.target.value);
   $("votive").onchange = (event) => { state.votive = event.target.value; loadText(); };
   $("propers").onclick = () => { state.propers = true; massForms(); loadText(); };
   $("full").onclick = () => { state.propers = false; massForms(); loadText(); };
@@ -271,6 +299,8 @@ function controls() {
 async function refresh() { await loadDay(); await loadText(); }
 
 controls();
+state.theme = storedTheme();
+applyTheme(state.theme);
 massForms();
 loadOptions().then(() => { rites(); refresh(); });
 </script>
