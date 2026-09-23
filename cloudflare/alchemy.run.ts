@@ -1,20 +1,16 @@
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as Effect from "effect/Effect";
-import type { Engine } from "./worker.ts";
 
-// A private API for the Divinum Officium engine.
+// A private API for the Divinum Officium texts.
 //
-// The engine is Perl — Starman serving the same CGI the website uses — so it
-// runs in a Cloudflare Container built from the project's own published image.
-// The Worker in front of it is only a door: it forwards /cgi-bin/... to the
-// container and lets Cloudflare Access decide who may knock. Nothing is
-// pre-generated and nothing is stored: the texts are the repository's own,
-// rendered per request.
+// No container: the repository's own files are served to the Worker as static
+// assets, and the Worker assembles an office or a Mass from them per request.
+// The calendar artifact (built at deploy time from the engine's own
+// precedence — see tools/build_calendar.py) says which file wins a date.
 //
-// Deploy with `bun run deploy` (dev stage, workers.dev URL) or
-// `bun run deploy:prod`. Nothing is built locally: the engine image is pulled
-// from ghcr.io and pushed to Cloudflare's registry on first deploy.
+// Cloudflare Access keeps the workers.dev hostname private: readers present a
+// service token, which this stack creates and prints.
 export default Alchemy.Stack(
   "DivinumOfficiumApi",
   {
@@ -24,32 +20,23 @@ export default Alchemy.Stack(
   Effect.gen(function* () {
     const stage = yield* Alchemy.Stage;
 
-    // The service token the Omarchy plugin authenticates with. Revoking the
-    // token closes the API to that machine without touching the container.
     const token = yield* Cloudflare.Access.ServiceToken("PluginToken", {
       name: "omarchy divinum officium",
     });
 
-    // Service Auth: service tokens only. No identity provider, no browser
-    // login — this is what keeps the workers.dev hostname private.
+    // Service Auth: service tokens only, no identity provider, no login page.
     const policy = yield* Cloudflare.Access.Policy("ServiceAuth", {
       name: "service token only",
       decision: "non_identity",
       include: [{ serviceToken: { tokenId: token.serviceTokenId } }],
     });
 
-    // `access` gives this Worker its own Access application, covering
-    // workers.dev, previews, and any custom domain it is later given.
     const api = yield* Cloudflare.Worker("Api", {
-      main: "./worker.ts",
+      main: "./src/worker.ts",
       workersDev: true,
-      env: {
-        Engine: Cloudflare.Container<Engine>("Engine", {
-          image: "ghcr.io/divinumofficium/divinum-officium:master",
-          instanceType: "basic",
-          ports: [{ name: "http", port: 8080 }],
-        }),
-      },
+      // The texts and the calendar artifact, straight out of the repository.
+      // Built by tools/sync_assets.py and tools/build_calendar.py.
+      assets: { directory: "./.assets" },
       access: {
         name: stage === "prod" ? "Divinum Officium API" : "Divinum Officium API (dev)",
         policies: [policy],

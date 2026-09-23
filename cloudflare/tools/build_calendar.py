@@ -33,8 +33,13 @@ PATCH_ANCHOR = "precedence($date1);    #fills our hashes et variables"
 
 PATCH = """
 # --- dumpordo: build-time only, added by the API's calendar builder ---------
+# Emits the engine's own resolution for this date as JSON and stops before
+# anything is rendered. Only the *selection* travels: which file wins, what it
+# commemorates, the rank, the rule, the vesper index, and the headline and
+# colour the page would print. The texts themselves are not dumped.
 if (strictparam('dumpordo')) {
   use JSON::PP;
+  my $headline = setheadline();
   my %dump = (
     date        => $date1,
     version     => $version,
@@ -47,10 +52,13 @@ if (strictparam('dumpordo')) {
     rule        => $rule,
     duplex      => $duplex,
     vespera     => $vespera,
-    dayname     => [@dayname],
+    headline    => $headline,
+    colourKey   => liturgical_color($headline),
+    titles      => [@dayname],
   );
   print "Content-type: application/json; charset=utf-8\\n\\n";
-  print JSON::PP->new->utf8->canonical->encode(\\%dump);
+  # No `utf8` layer: the engine's strings already are UTF-8 bytes.
+  print JSON::PP->new->canonical->encode(\\%dump);
   exit;
 }
 # --- end dumpordo ----------------------------------------------------------
@@ -120,9 +128,11 @@ def one_day(horas_dir: str, perl_lib: str, version: str, day: str) -> dict:
         "communetype": text(payload.get("communetype")),
         "rank": text(payload.get("rank")),
         "rule": text(payload.get("rule")),
+        "headline": text(payload.get("headline")),
+        "colourKey": text(payload.get("colourKey")),
         "duplex": payload.get("duplex", 0),
         "vespera": payload.get("vespera", 0),
-        "titles": [text(t) for t in (payload.get("dayname") or [])],
+        "titles": [text(t) for t in (payload.get("titles") or [])],
     }
 
 
@@ -180,6 +190,24 @@ def main(argv: list[str]) -> int:
             print(f"{year}: {len(selection)} days, {size/1024:.0f} KB → {path}")
             if failures:
                 print(f"  {len(failures)} failed: {failures[:3]}", file=sys.stderr)
+
+    # The API's /v1/index.json answers from this: which versions exist, and for
+    # which years. Written last so a half-built run never advertises itself.
+    index_path = os.path.join(args.out, "index.json")
+    index = {"generatedBy": "divinum-officium engine (precedence)", "versions": {}}
+    for entry in sorted(os.listdir(args.out)):
+        version_dir = os.path.join(args.out, entry)
+        if not os.path.isdir(version_dir):
+            continue
+        years = sorted(int(name[:4]) for name in os.listdir(version_dir) if name.endswith(".json"))
+        latest = os.path.join(version_dir, f"{years[-1]}.json") if years else None
+        version_name = args.version
+        if latest:
+            version_name = json.load(open(latest, encoding="utf-8"))["version"]
+        index["versions"][entry] = {"version": version_name, "years": years}
+    with open(index_path, "w", encoding="utf-8") as handle:
+        json.dump(index, handle, ensure_ascii=False, indent=2, sort_keys=True)
+    print(f"index → {index_path}")
     return 0
 
 
