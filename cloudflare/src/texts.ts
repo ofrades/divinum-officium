@@ -77,24 +77,30 @@ export function parseInclusion(line: string): Inclusion | null {
 /** `1-2` selects lines (1-based); `!1-2` deletes them; `s/…/…/flags` rewrites. */
 export function applySubstitutions(lines: string[], substitutions: string): string[] {
   let out = [...lines];
-  const pattern = /s\/([^/]*)\/([^/]*)\/([gims]*)|(!?)(\d+)(?:-(\d+))?/g;
+  // Named groups: the two alternatives have different shapes, and counting
+  // positional groups across an alternation is how this was wrong at first.
+  const pattern =
+    /s\/(?<pattern>[^/]*)\/(?<replacement>[^/]*)\/(?<flags>[gims]*)|(?<delete>!?)(?<start>\d+)(?:-(?<end>\d+))?/g;
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(substitutions)) !== null) {
-    if (match[4]) {
-      const start = parseInt(match[4], 10) - 1;
-      const end = match[5] ? parseInt(match[5], 10) : start + 1;
+    const groups = match.groups ?? {};
+    if (groups.start) {
+      const start = parseInt(groups.start, 10) - 1;
+      const end = groups.end ? parseInt(groups.end, 10) : start + 1;
       const slice = out.slice(start, end);
-      out = match[3] ? out.filter((_, index) => index < start || index >= end) : slice;
+      // A leading `!` deletes the range instead of selecting it.
+      out = groups.delete ? out.filter((_, index) => index < start || index >= end) : slice;
       continue;
     }
-    if (match[1] !== undefined) {
-      const flags = match[3].includes("g") ? "g" : "";
-      const expression = new RegExp(match[1], flags + (match[3].includes("i") ? "i" : ""));
-      out = out.map((line) => line.replace(expression, match![2]));
+    if (groups.pattern !== undefined) {
+      const flags = (groups.flags ?? "").includes("g") ? "g" : "";
+      const expression = new RegExp(groups.pattern, flags + ((groups.flags ?? "").includes("i") ? "i" : ""));
+      out = out.map((line) => line.replace(expression, groups.replacement ?? ""));
     }
   }
   return out;
 }
+
 
 /**
  * Resolve `@` inclusions line by line, as `setupstring` does: a body may be one
