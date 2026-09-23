@@ -22,7 +22,9 @@ import sys
 
 # What the engine reads to render an office and a Mass for one language.
 LANGUAGE_TREES = ("horas", "missa")
-SHARED_TREES = ("Tabulae",)
+# Ordinary scripts (the shape of each hour) are language-independent: they live
+# at the root of `horas/`, not inside a language.
+SHARED_TREES = ("Tabulae", "horas/Ordinarium")
 
 
 def copy_tree(source: str, target: str, wanted: str | None) -> tuple[int, int]:

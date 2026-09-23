@@ -1,15 +1,18 @@
+import { assembleOffice, type OfficePayload } from "./office";
 import { type CalendarArtifact, type CalendarIndex, normalizeVersion, slug } from "./artifact";
+import { SITE_HTML } from "./site";
+import type { TextSource } from "./script";
 
-// The API surface. Two ends:
+// The API surface, and the reader that uses it.
 //
-//   /v1/day/<date>                    what the day is, from the calendar artifact
-//   /v1/office|mass/<date>[/<hour>]   the texts, assembled from the repository
+//   /                                 the reader (one page, no build step)
+//   /v1/index.json                    versions and years the artifacts cover
+//   /v1/day/<date>                    the day: headline, colour, rank, winner
+//   /v1/office/<date>/<hour>          the hour, assembled from the repository
+//   /v1/mass/<date>                   the Mass's selection (assembly to come)
 //
-// The texts are assembled from the repository's own files, served here as
-// static assets; nothing is pre-rendered. The calendar artifact says which of
-// those files wins a date — it is built at deploy time by asking the engine
-// itself (cloudflare/tools/build_calendar.py), so the day's identity matches
-// the website's exactly.
+// The texts are assembled per request from the repository's own files, served
+// here as static assets; nothing is pre-rendered.
 interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
 }
@@ -25,21 +28,21 @@ function html(body: string, status = 200): Response {
   return new Response(body, { status, headers: HTML_HEADERS });
 }
 
-/** Dates near today, for the landing page. */
-function around(today: string): string[] {
-  const base = new Date(`${today}T00:00:00Z`);
-  return [-1, 0, 1].map((offset) => {
-    const day = new Date(base);
-    day.setUTCDate(day.getUTCDate() + offset);
-    return day.toISOString().slice(0, 10);
-  });
+/** The repository's files, read through the asset layer. */
+function assetSource(env: Env, request: Request): TextSource {
+  return {
+    async read(path: string) {
+      const asset = new Request(new URL("/" + path, request.url).toString(), { method: "GET" });
+      const response = await env.ASSETS.fetch(asset);
+      if (!response.ok) return null;
+      return response.text();
+    },
+  };
 }
 
 async function readJson<T>(env: Env, request: Request, path: string): Promise<T | null> {
-  // The asset layer answers anything that matches a file; the Worker reads its
-  // own data the same way a browser would.
-  const assetRequest = new Request(new URL(path, request.url).toString(), { method: "GET" });
-  const response = await env.ASSETS.fetch(assetRequest);
+  const asset = new Request(new URL(path, request.url).toString(), { method: "GET" });
+  const response = await env.ASSETS.fetch(asset);
   if (!response.ok) return null;
   try {
     return (await response.json()) as T;
@@ -54,66 +57,50 @@ function isoDate(value: string | undefined): string | null {
   return Number.isNaN(parsed.getTime()) ? null : value;
 }
 
+const HOURS = ["Matutinum", "Laudes", "Prima", "Tertia", "Sexta", "Nona", "Vesperae", "Completorium"];
+
+function canonicalHour(value: string | undefined): string | null {
+  if (!value) return null;
+  const wanted = value.toLowerCase();
+  return HOURS.find((hour) => hour.toLowerCase() === wanted) ?? null;
+}
+
+async function selectionFor(
+  env: Env,
+  request: Request,
+  version: string,
+  date: string,
+  rite: "office" | "mass",
+): Promise<CalendarArtifact["days"][string] | null> {
+  const root = rite === "mass" ? "/calendar-mass" : "/calendar";
+  const artifact = await readJson<CalendarArtifact>(
+    env,
+    request,
+    `${root}/${slug(version)}/${date.slice(0, 4)}.json`,
+  );
+  return artifact?.days[date] ?? null;
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const route = url.pathname.replace(/\/+$/, "");
 
-    if (route === "" || route === "/" || route === "/health") {
-      const today = new Date().toISOString().slice(0, 10);
-      const days = around(today)
-        .map((date) => `<a href="/v1/day/${date}">${date}</a>`)
-        .join(" · ");
-      return html(
-        `<!doctype html>
-<html lang="en">
-<head><meta charset="utf-8"><title>Divinum Officium API</title>
-<style>body{font:14px/1.6 ui-monospace,monospace;margin:3rem auto;max-width:44rem;padding:0 1rem}
-code{background:#f2f2f2;padding:.1rem .3rem}a{color:inherit}</style></head>
-<body>
-<h1>Divinum Officium API</h1>
-<p>The traditional Roman office and Mass, assembled from the
-<a href="https://github.com/DivinumOfficium/divinum-officium">Divinum Officium</a>
-texts in <a href="https://github.com/ofrades/divinum-officium/tree/cloudflare-api/cloudflare">this fork</a>.</p>
-<ul>
-<li><code>GET /v1/index.json</code> — versions and years</li>
-<li><code>GET /v1/day/&lt;YYYY-MM-DD&gt;</code> — headline, colour, rank, winning file</li>
-<li><code>GET /v1/office/&lt;date&gt;/&lt;hour&gt;</code> — the hour's texts <em>(assembler pending)</em></li>
-<li><code>GET /v1/mass/&lt;date&gt;</code> — the Mass <em>(assembler pending)</em></li>
-<li><code>GET /health</code></li>
-</ul>
-<p>Days near today: ${days}</p>
-</body></html>`,
-      );
-    }
+    if (route === "" || route === "/") return html(SITE_HTML);
+    if (route === "/health") return json({ ok: true, api: "divinum-officium" });
 
     if (route === "/v1/index.json") {
       const index = await readJson<CalendarIndex>(env, request, "/calendar/index.json");
-      return json({
-        ok: true,
-        generatedBy: index?.generatedBy ?? null,
-        versions: index?.versions ?? {},
-      });
+      return json({ ok: true, generatedBy: index?.generatedBy ?? null, versions: index?.versions ?? {} });
     }
 
     const dayMatch = route.match(/^\/v1\/day\/([^/]+)$/);
     if (dayMatch) {
       const date = isoDate(dayMatch[1]);
       if (!date) return json({ ok: false, error: "expected /v1/day/YYYY-MM-DD" }, 400);
-
       const version = normalizeVersion(url.searchParams.get("version"));
-      const year = date.slice(0, 4);
-      const artifact = await readJson<CalendarArtifact>(
-        env,
-        request,
-        `/calendar/${slug(version)}/${year}.json`,
-      );
-      if (!artifact) {
-        return json({ ok: false, error: `no calendar artifact for ${version} ${year}` }, 501);
-      }
-      const day = artifact.days[date];
-      if (!day) return json({ ok: false, error: `no office for ${date} in ${version}` }, 404);
-
+      const day = await selectionFor(env, request, version, date, "office");
+      if (!day) return json({ ok: false, error: `no calendar for ${version} ${date}` }, 501);
       return json({
         ok: true,
         date,
@@ -130,18 +117,42 @@ texts in <a href="https://github.com/ofrades/divinum-officium/tree/cloudflare-ap
       });
     }
 
-    const textMatch = route.match(/^\/v1\/(office|mass)\/([^/]+)(?:\/([^/]+))?$/);
-    if (textMatch) {
-      const date = isoDate(textMatch[2]);
-      if (!date) return json({ ok: false, error: "expected a YYYY-MM-DD date" }, 400);
+    const officeMatch = route.match(/^\/v1\/office\/([^/]+)\/([^/]+)$/);
+    if (officeMatch) {
+      const date = isoDate(officeMatch[1]);
+      const hour = canonicalHour(officeMatch[2]);
+      if (!date || !hour) return json({ ok: false, error: "expected /v1/office/YYYY-MM-DD/<hour>" }, 400);
+
+      const version = normalizeVersion(url.searchParams.get("version"));
+      const selection = await selectionFor(env, request, version, date, "office");
+      if (!selection) return json({ ok: false, error: `no calendar for ${version} ${date}` }, 501);
+
+      const lang1 = url.searchParams.get("lang1") ?? "Latin";
+      const lang2 = url.searchParams.get("lang2") ?? lang1;
+      const payload: OfficePayload = await assembleOffice({
+        source: assetSource(env, request),
+        date,
+        hour,
+        version,
+        lang1,
+        lang2,
+        selection,
+      });
+      return json(payload);
+    }
+
+    const massMatch = route.match(/^\/v1\/mass\/([^/]+)$/);
+    if (massMatch) {
+      const date = isoDate(massMatch[1]);
+      if (!date) return json({ ok: false, error: "expected /v1/mass/YYYY-MM-DD" }, 400);
+      const version = normalizeVersion(url.searchParams.get("version"));
+      const selection = await selectionFor(env, request, version, date, "mass");
       return json(
         {
           ok: false,
-          error: "the text assembler is not implemented yet",
-          rite: textMatch[1],
-          date,
-          hour: textMatch[3] ?? null,
-          planned: "assembled per request from the repository's own files, checked against the 2026 golden corpus",
+          error: "the Mass assembler is not implemented yet",
+          planned: "the missal's propers and Ordinary, assembled from the same repository files",
+          selection,
         },
         501,
       );

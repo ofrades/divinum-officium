@@ -35,12 +35,18 @@ import tempfile
 
 DUMP_PARAM = "dumpordo"
 
-# Both rites reach their selection through the same call, spelled the same way.
-PATCH_ANCHOR = "precedence();    #fills our hashes et variables"
+# Both rites reach their selection through the same call — the missal passes
+# no date, the office passes its own.
+PATCH_ANCHOR = {
+    "office": "precedence($date1);    #fills our hashes et variables",
+    "mass": "precedence();    #fills our hashes et variables",
+}
 
+# `run` is the CGI a request goes to; `patch` is the file that holds the
+# selection (the office's wrapper only requires the real script).
 RITES = {
-    "office": {"dir": ("horas", "Pofficium.pl"), "command": "prayPrima"},
-    "mass": {"dir": ("missa", "missa.pl"), "command": "pray"},
+    "office": {"dir": "horas", "run": "Pofficium.pl", "patch": "officium.pl", "command": "prayPrima"},
+    "mass": {"dir": "missa", "run": "missa.pl", "patch": "missa.pl", "command": "pray"},
 }
 
 PATCH = """
@@ -91,11 +97,12 @@ def prepare_engine(repo: str, workdir: str, rite: str) -> str:
         raise SystemExit(f"{repo} does not look like a Divinum Officium checkout")
     shutil.copytree(cgi, os.path.join(workdir, "web", "cgi-bin"))
     os.symlink(www, os.path.join(workdir, "web", "www"))
-    entry = os.path.join(workdir, "web", "cgi-bin", *RITES[rite]["dir"])
+    entry = os.path.join(workdir, "web", "cgi-bin", RITES[rite]["dir"], RITES[rite]["patch"])
     raw = open(entry, encoding="utf-8", errors="replace").read()
-    if PATCH_ANCHOR not in raw:
-        raise SystemExit(f"the engine moved: `precedence();` not found in {RITES[rite]['dir'][1]}")
-    open(entry, "w", encoding="utf-8").write(raw.replace(PATCH_ANCHOR, PATCH_ANCHOR + PATCH, 1))
+    anchor = PATCH_ANCHOR[rite]
+    if anchor not in raw:
+        raise SystemExit(f"the engine moved: `precedence()` not found in {RITES[rite]['patch']}")
+    open(entry, "w", encoding="utf-8").write(raw.replace(anchor, anchor + PATCH, 1))
     return os.path.dirname(entry)
 
 
@@ -104,7 +111,7 @@ def one_day(horas_dir: str, perl_lib: str, version: str, day: str, rite: str) ->
     env["PERL5LIB"] = perl_lib + (":" + env["PERL5LIB"] if env.get("PERL5LIB") else "")
     result = subprocess.run(
         [
-            "perl", RITES[rite]["dir"][1],
+            "perl", RITES[rite]["run"],
             f"command={RITES[rite]['command']}",
             f"date1={day.strftime('%m-%d-%Y')}",
             f"version={version}",
