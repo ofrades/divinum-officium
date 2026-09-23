@@ -1,5 +1,6 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
+import { psalmodyRows } from "./psalterium";
 import { renderBody, renderLine, type RenderContext } from "./render";
 import { parseScript, scriptBlocks, scriptSections, type ScriptBlock, type TextSource } from "./script";
 import { resolveSection } from "./texts";
@@ -183,7 +184,31 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
   const languages = [request.lang1, request.lang2];
 
   const sections: OfficeSection[] = [];
+  const weekday = new Date(`${request.date}T12:00:00Z`).getUTCDay();
   for (const block of blocks) {
+    // The psalmody is the one block that becomes several rows: one per psalm,
+    // the first carrying the label and the antiphon, the last the repeat.
+    if (/^Psalmi$/i.test(block.label)) {
+      const rows = await psalmodyRows(
+        request.source,
+        request.lang1,
+        hour,
+        request.date,
+        weekday,
+        selection.rule,
+        context,
+        renderContext,
+      );
+      if (rows) {
+        for (const [index, lines] of rows.entries()) {
+          sections.push({
+            columns: [{ label: index === 0 ? block.label : "", note: "", lines }, { label: "", note: "", lines: [] }],
+          });
+        }
+        continue;
+      }
+    }
+
     const columns: OfficeColumn[] = [];
     for (const language of languages) {
       const lines = await resolveBlock(block, language, request, context, renderContext);
