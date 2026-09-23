@@ -169,27 +169,24 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
     .map((section) => section.label);
 
   notes.push(
-    `${labels.length} sections from the Ordinarium; only the Incipit carries text so far`,
+    `${labels.length} sections from the Ordinarium; references resolve through the language's own tables`,
   );
   if (selection.headline === "" && selection.titles.length === 0) {
     notes.push("the calendar artifact has no headline for this day");
   }
 
-  // Only the first block is resolved so far: it is where the references are
-  // fewest and the pipeline (lookup → notation → classification) is exercised
-  // end to end. The rest follow as each lookup they need is ported.
+  // Every block is resolved through the same pipeline — lookup, notation,
+  // classification. A block whose references need a table that is not ported
+  // yet simply comes out empty, and the parity tool reports the difference.
   const blocks = scriptBlocks(items).filter((block) => labels.includes(block.label));
   const renderContext: RenderContext = { version };
   const languages = [request.lang1, request.lang2];
 
   const sections: OfficeSection[] = [];
-  for (const [index, block] of blocks.entries()) {
+  for (const block of blocks) {
     const columns: OfficeColumn[] = [];
     for (const language of languages) {
-      const lines =
-        index === 0
-          ? await resolveBlock(block, language, request, context, renderContext)
-          : [];
+      const lines = await resolveBlock(block, language, request, context, renderContext);
       columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines });
     }
     sections.push({ columns });

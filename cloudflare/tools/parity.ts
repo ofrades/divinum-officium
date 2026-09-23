@@ -64,6 +64,34 @@ function corpusSections(payload: OfficePayload | Record<string, unknown>): strin
     .filter((label) => label !== "");
 }
 
+/**
+ * The labelled sections, in order, with their first-column lines.
+ *
+ * Continuation rows (a psalm continuing across the table, which the corpus
+ * carries as an unlabelled section) are not compared here: they belong to the
+ * psalmody, and until that is ported they would only shift the alignment.
+ */
+function labelledSections(payload: Record<string, unknown>): Array<{ label: string; lines: string[] }> {
+  const sections = (payload as { sections?: OfficePayload["sections"] }).sections ?? [];
+  const out: Array<{ label: string; lines: string[] }> = [];
+  for (const section of sections) {
+    const label = section.columns.find((column) => column.label !== "")?.label ?? "";
+    if (label === "") continue;
+    out.push({
+      label,
+      lines: (section.columns[0]?.lines ?? []).map((line) => `${line.k}|${line.marker ?? ""}|${line.text ?? ""}|${line.after ?? ""}`),
+    });
+  }
+  return out;
+}
+
+function sectionLabel(payload: Record<string, unknown>, index: number): string {
+  const sections = (payload as { sections?: OfficePayload["sections"] }).sections ?? [];
+  const section = sections[index];
+  if (!section) return "";
+  return section.columns.find((column) => column.label !== "")?.label ?? "(continued)";
+}
+
 function lineTexts(payload: Record<string, unknown>): string[] {
   const sections = (payload as { sections?: OfficePayload["sections"] }).sections ?? [];
   const out: string[] = [];
@@ -105,6 +133,7 @@ async function main() {
   let lineTotal = 0;
   let daysWithSectionShape = 0;
   const examples: string[] = [];
+  const byLabel = new Map<string, { want: number; matched: number }>();
 
   for (const file of files) {
     const corpus = JSON.parse(await readFile(file, "utf8")) as Record<string, unknown> & {
@@ -144,11 +173,24 @@ async function main() {
     labelMatches += matched;
     if (want.length > 0 && matched === want.length) daysWithSectionShape++;
 
-    const corpusLines = lineTexts(corpus);
-    const producedLines = lineTexts(produced as unknown as Record<string, unknown>);
-    lineTotal += corpusLines.length;
-    for (let index = 0; index < Math.min(corpusLines.length, producedLines.length); index++) {
-      if (corpusLines[index] === producedLines[index]) lineMatches++;
+    // Line parity is per section: a global count hides which part of the hour
+    // is done and which is not.
+    const wantSections = labelledSections(corpus);
+    const gotSections = labelledSections(produced as unknown as Record<string, unknown>);
+    lineTotal += wantSections.reduce((sum, section) => sum + section.lines.length, 0);
+    for (let index = 0; index < Math.min(wantSections.length, gotSections.length); index++) {
+      const want = wantSections[index];
+      const got = gotSections[index];
+      let matched = 0;
+      for (let line = 0; line < Math.min(want.lines.length, got.lines.length); line++) {
+        if (want.lines[line] === got.lines[line]) matched++;
+      }
+      lineMatches += matched;
+      const label = want.label;
+      const stat = byLabel.get(label) ?? { want: 0, matched: 0 };
+      stat.want += want.lines.length;
+      stat.matched += matched;
+      byLabel.set(label, stat);
     }
 
     if (examples.length < 3 && matched !== want.length) {
@@ -167,6 +209,11 @@ async function main() {
   console.log(`  section shape ${daysWithSectionShape}/${files.length}   ${percent(daysWithSectionShape, files.length)}`);
   console.log(`  section labels ${labelMatches}/${labelTotal}   ${percent(labelMatches, labelTotal)}`);
   console.log(`  lines         ${lineMatches}/${lineTotal}   ${percent(lineMatches, lineTotal)}`);
+  console.log("\nby section (corpus lines matched):");
+  for (const [label, stat] of byLabel) {
+    const bar = stat.want === 0 ? "" : `  ${percent(stat.matched, stat.want)}`;
+    console.log(`  ${label.padEnd(30)} ${String(stat.matched).padStart(5)}/${String(stat.want).padEnd(5)}${bar}`);
+  }
   if (examples.length) {
     console.log("\nfirst shape differences:");
     console.log(examples.join("\n"));

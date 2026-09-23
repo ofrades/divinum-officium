@@ -27,8 +27,40 @@ export function normaliseName(name: string): string[] {
   return spaced === cleaned ? [cleaned] : [cleaned, spaced];
 }
 
+/**
+ * Script functions: references the engine answers with code rather than a
+ * section lookup (`horasscripts.pl`'s `: ScriptFunc` subs). Each takes the
+ * prayer tables and returns the lines to print. Ported one at a time, as the
+ * hours being assembled need them.
+ */
+type ScriptFunction = (lookup: LookupRequest) => Promise<string[] | null>;
+
+async function prayerBody(request: LookupRequest, name: string): Promise<string[] | null> {
+  return resolveSection({ ...request, name });
+}
+
+const SCRIPT_FUNCTIONS: Record<string, ScriptFunction> = {
+  // horasscripts.pl: `Dominus_vobiscum` — for a reader (not a priest) this is
+  // the "Dómine, exáudi oratiónem meam / Et clamor meus ad te véniat" pair,
+  // which is lines 3-4 of `[Dominus]`.
+  dominus_vobiscum: async (request) => {
+    const body = await prayerBody(request, "Dominus");
+    return body === null ? null : body.slice(2, 4);
+  },
+  // `Dominus_vobiscum1` is the same text with an extra preces flag the reader
+  // does not carry yet.
+  dominus_vobiscum1: async (request) => SCRIPT_FUNCTIONS.dominus_vobiscum(request),
+  // `mLitany` returns the Kyrie and the silent Pater for the ferial preces; at
+  // Prime those preces are not said, so it contributes nothing.
+  mlitany: async () => [],
+};
+
 /** The body of `[name]`, resolved through the language's tables. */
 export async function resolveSection(request: LookupRequest): Promise<string[] | null> {
+  // Script functions answer first, as the engine does.
+  const fn = SCRIPT_FUNCTIONS[request.name.trim().toLowerCase()];
+  if (fn) return fn(request);
+
   const paths = [
     request.dayFile,
     `horas/${request.lang}/Psalterium/Common/Prayers.txt`,

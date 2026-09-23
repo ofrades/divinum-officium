@@ -34,7 +34,7 @@ export function fancy(text: string): string {
 
 const VERSE_NUMBER = /^([0-9]+[:.]\s*[0-9]+)\s+(.*)$/;
 const PSALM_TITLE = /^(Psalmus|Psalm|Canticum|Canticle)\s+((?:[0-9]+|[\p{Lu}][\p{Ll}]+).*)$/u;
-const MARKERS = /^(℣\.|℟\.|V\.|R\.|Ant\.|v\.|r\.)\s*(.*)$/;
+const MARKERS = /^(℣\.|℟\.|V\.|R\.|Ant\.|Benedictio\.|Absolutio\.|v\.|r\.)\s*(.*)$/;
 
 /**
  * One source line to one classified line, or null when the line is notation
@@ -56,6 +56,10 @@ export function renderLine(raw: string, context: RenderContext): OfficeLine | nu
     }
     if (token.toUpperCase() === "ANT.") {
       return { k: "rubric", marker: "Ant.", text: fancy(rest) };
+    }
+    // "Benedictio." and "Absolutio." introduce a spoken rubric, as Ant. does.
+    if (token === "Benedictio." || token === "Absolutio.") {
+      return { k: "rubric", marker: token, text: fancy(rest) };
     }
     line = rest;
   }
