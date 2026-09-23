@@ -30,21 +30,50 @@ export interface PsalmPlan {
 
 const WEEKDAY_NAMES = ["Dominica", "Feria II", "Feria III", "Feria IV", "Feria V", "Feria VI", "Sabbato"];
 
-/** The `Psalmi minor.txt` hour section's plan for a weekday. */
-export function parsePlan(text: string, hour: string, weekday: number): PsalmPlan | null {
-  const section = sectionBody(parseSections(text), hour === "Prima" ? "Prima" : hour);
-  if (!section) return null;
+/**
+ * Which pair of lines in the hour's section holds the day's psalmody.
+ *
+ * The engine's own selection (specials/psalmi.pl): the weekday pair by default,
+ * the Sunday pair when the rule says `Psalmi Dominica`, and the weekday pair
+ * again under the 1960 rubrics for the days whose rank lets them keep the
+ * ferial psalms — which is most feasts.
+ */
+export function planIndex(hour: string, weekday: number, selection: DaySelection, version: string): number {
+  const rule = selection.rule ?? "";
+  const winner = selection.winner ?? "";
+  const rank = parseFloat(selection.rank ?? "") || 0;
+  const titles = selection.titles ?? [];
 
-  for (let index = 0; index < section.length; index++) {
-    const line = section[index].trim();
-    const named = /^(Dominica|Feria [IV]+|Sabbato)\s*=\s*(.*)$/.exec(line);
-    if (named && named[1] === WEEKDAY_NAMES[weekday]) {
-      const antiphon = named[2].trim();
-      const next = (section[index + 1] ?? "").trim();
-      return { antiphon, psalms: parseSpecs(next) };
-    }
+  let index = 2 * weekday;
+  if (/Psalmi\s*(?:minores)?\s*Dominica/i.test(rule)) index = 0;
+  if (
+    /19(?:55|60|62)/.test(version) &&
+    (/horas1960 feria/i.test(rule) ||
+      (/Sancti|C[1-7]/i.test(winner) && rank < 5) ||
+      (/Sancti|C[1-7]/i.test(winner) || /Nat[23]/i.test(winner)) && rank < 6 && hour !== "Completorium")
+  ) {
+    index = 2 * weekday;
   }
-  return null;
+  if (
+    hour === "Completorium" &&
+    weekday === 6 &&
+    /Dominica/i.test(titles[1] ?? "") &&
+    !/^Nat/.test(titles[0] ?? "")
+  ) {
+    index = 12;
+  }
+  return index;
+}
+
+/** The `Psalmi minor.txt` hour section's plan at the chosen pair of lines. */
+export function parsePlan(text: string, hour: string, index: number): PsalmPlan | null {
+  const section = sectionBody(parseSections(text), hour === "Prima" ? "Prima" : hour);
+  if (!section || index + 1 >= section.length) return null;
+
+  const antiphon = section[index].trim().replace(/^[^=]*=\s*/, "");
+  const psalms = section[index + 1].trim();
+  if (antiphon === "" || psalms === "") return null;
+  return { antiphon, psalms: parseSpecs(psalms) };
 }
 
 export function parseSpecs(line: string): PsalmSpec[] {
@@ -152,6 +181,8 @@ export async function psalmodyRows(
   rule: string,
   context: ConditionContext,
   render: RenderContext,
+  selection?: DaySelection,
+  version?: string,
 ): Promise<OfficeLine[][] | null> {
   const minor = hour === "Prima" || hour === "Tertia" || hour === "Sexta" || hour === "Nona";
   if (!minor) return null;
@@ -160,8 +191,20 @@ export async function psalmodyRows(
     ?? await source.read("horas/Latin/Psalterium/Psalmi/Psalmi minor.txt");
   if (text === null) return null;
 
-  const plan = parsePlan(text, hour, weekday);
+  const index =
+    selection && version ? planIndex(hour, weekday, selection, version) : 2 * weekday;
+  const plan = parsePlan(text, hour, index);
   if (!plan || plan.psalms.length === 0) return null;
+  // A Sunday Prime that falls in Paschaltide or on a feast uses psalm 53 where
+  // the psalter prints 117.
+  if (
+    version &&
+    /196/.test(version) &&
+    /117/.test(plan.psalms.map((spec) => spec.number).join(",")) &&
+    /Laudes 2|Prima=53/i.test(rule)
+  ) {
+    plan.psalms = plan.psalms.map((spec) => (spec.number === 117 ? { ...spec, number: 53 } : spec));
+  }
 
   const close = await doxology(source, lang, rule, context, render);
   const rows: OfficeLine[][] = [];
@@ -172,8 +215,12 @@ export async function psalmodyRows(
       const antiphon = renderLine(`Ant. ${plan.antiphon}`, render);
       if (antiphon) lines.push(antiphon);
     }
-    const title = `Psalmus ${spec.number}`;
-    lines.push({ k: "title", text: title, after: `[${index + 1}]` });
+    // A psalm said in parts carries its range in the title: `Psalmus 21(2-12)`.
+    const range =
+      spec.from && spec.to
+        ? `(${spec.from.verse}${spec.from.sub ?? ""}-${spec.to.verse}${spec.to.sub ?? ""})`
+        : "";
+    lines.push({ k: "title", text: `Psalmus ${spec.number}${range}`, after: `[${index + 1}]` });
     const verses = await psalmVerses(source, lang, spec, context);
     if (verses) lines.push(...renderBody(verses, render));
     lines.push(...close);

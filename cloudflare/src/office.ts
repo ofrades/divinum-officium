@@ -213,6 +213,8 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
         selection.rule,
         context,
         renderContext,
+        selection,
+        version,
       );
       if (rows) {
         for (const [index, lines] of rows.entries()) {

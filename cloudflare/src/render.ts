@@ -27,6 +27,9 @@ export function orthography(text: string, version: string): string {
 /** The engine's fancy characters: `+` is the cross, `++`/`+++` its variants. */
 export function fancy(text: string): string {
   return text
+    // The flexa (dagger) and its variants are pointing marks the page does not
+    // print; the mediant star it does.
+    .replace(/\s*†\s*/g, " ")
     .replace(/\+\+\+/g, "✙︎")
     .replace(/\+\+/g, "✠✠")
     .replace(/\+/g, "✠");
@@ -54,6 +57,7 @@ export function renderLine(raw: string, context: RenderContext): OfficeLine | nu
 
   // The mediant star and the flexa are kept as they stand: they are how the
   // psalm is pointed, and the reader shows them.
+  line = line.replace(/\s+/g, " ").trim();
   const marker = MARKERS.exec(line);
   if (marker) {
     const [, token, rest] = marker;
