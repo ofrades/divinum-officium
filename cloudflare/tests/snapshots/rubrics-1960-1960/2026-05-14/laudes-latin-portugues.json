@@ -1,0 +1,171 @@
+{
+ "colourKey": "black",
+ "digest": "b1bd8b8bad494bf76e6f582087a2216ac7129be4dee1aec92bfa9877887eac20",
+ "hourTitle": "Ad Laudes",
+ "request": {
+  "date": "2026-05-14",
+  "hour": "Laudes",
+  "kind": "office",
+  "lang1": "Latin",
+  "lang2": "Portugues",
+  "version": "Rubrics 1960 - 1960"
+ },
+ "sectionCount": 11,
+ "sections": [
+  {
+   "columns": [
+    {
+     "label": "Incipit",
+     "lines": 5,
+     "sha256": "6bf7408f733721fb5b8e3cc8fc2f3fd9bcf4eddef96bbf15fa8df42d781e5fbe"
+    },
+    {
+     "label": "Início",
+     "lines": 5,
+     "sha256": "9b8750da5cfe8b1ece20336f2f8199790cc36076e3e9747c7d30b0f01f9cb944"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Psalmi",
+     "lines": 12,
+     "sha256": "aa98a5254c90f9839c9606b22f8af859dcad068ad51af31a5f26b2aaa1f1e7eb"
+    },
+    {
+     "label": "Salmos",
+     "lines": 12,
+     "sha256": "a6dc16c383a90af3d5e18609d269ee9782a0d39bbed372d5e19ceca1ee773887"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "6cd1153e0e7e6477785f7097c000b34f0a68341e1a01f0894d05e267f1df3ddb"
+    },
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "42f0fe0660de9a0c15f3020a9050e47a858c9eb3a703a75a3936d6d75301dabd"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "6630cf19c75caac399806102d1660da7edc6b8231e53ca62d7cdbd4f70583066"
+    },
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "2e8ae3949781c0206ffbc8d1e9102304912538802615a89bfa59a4676774189b"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "01bc5916eeb00eaebb0d89193acdfcf4b7c39891531c35582bde432be5c29569"
+    },
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "3a4142c1f3b2049494353b56b14260f5cb89e3309ae0eece6927a09cf9633b51"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "3d3083ae97cda5132c79bcb36457c2e76baa3a96a0a1d8d13b296f50e1bcc042"
+    },
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "ed710822268a0291d9f07be620efa3bcb210c2e49f564286ba9c627ab89cca2c"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Capitulum Hymnus Versus",
+     "lines": 27,
+     "sha256": "2ed880b4d3f558d9471e03e0d36e6713838e5cf949726946b589d904bfcf8bad"
+    },
+    {
+     "label": "Capítulo Hino Verso",
+     "lines": 27,
+     "sha256": "ebcd4780b3e05a17001a39bf19216ab5e8c11cc8b158119069da0bcf026312da"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Canticum: Benedictus",
+     "lines": 18,
+     "sha256": "65ee1c35386686c846100b81862cf067e1f7acfbd2152ca9602ec2a5c33f0400"
+    },
+    {
+     "label": "Cântico: Benedictus",
+     "lines": 18,
+     "sha256": "89c08aefd420d9da94d7111ac0507c084d4b469b0793b6277878e9ff1b11889b"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "3affc01d8172964141934cb9ad316fd201cc7945bab9a6afdbd61816b55e4ce4"
+    },
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "405bb5e30cffc9a3101e9db269622abe328bab7c37a47580222efe32d331f594"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Oratio",
+     "lines": 6,
+     "sha256": "2b2334c11da7c9aa19259ccec933ba9d06a36032eeff9b1c74b8887c7ccd6dac"
+    },
+    {
+     "label": "Oração",
+     "lines": 6,
+     "sha256": "ceeb5bb3a3fbc7c6860b54a1feae1e79103d11a4521afc40778fdbd214fe33f1"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Conclusio",
+     "lines": 6,
+     "sha256": "46cff08dd4de0f13bbf5c2ee056434d74d0c00dc7d3d82347cdb7dacf5491ad7"
+    },
+    {
+     "label": "Conclusão",
+     "lines": 6,
+     "sha256": "ce0519fe34fa4fcc8defcc0656e35c72d6b50bb154f32cb121d9696ad19fbcd2"
+    }
+   ]
+  }
+ ],
+ "title": "In Ascensione Domini ~ I. classis"
+}

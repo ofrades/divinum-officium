@@ -1,0 +1,171 @@
+{
+ "colourKey": "purple",
+ "digest": "69c25f719991a82a662ade7059b943ef3c7abb80d4d9d1adf1d4827dc89781a5",
+ "hourTitle": "Ad Laudes",
+ "request": {
+  "date": "2026-09-23",
+  "hour": "Laudes",
+  "kind": "office",
+  "lang1": "Latin",
+  "lang2": "Portugues",
+  "version": "Rubrics 1960 - 1960"
+ },
+ "sectionCount": 11,
+ "sections": [
+  {
+   "columns": [
+    {
+     "label": "Incipit",
+     "lines": 5,
+     "sha256": "6bf7408f733721fb5b8e3cc8fc2f3fd9bcf4eddef96bbf15fa8df42d781e5fbe"
+    },
+    {
+     "label": "Início",
+     "lines": 5,
+     "sha256": "9b8750da5cfe8b1ece20336f2f8199790cc36076e3e9747c7d30b0f01f9cb944"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Psalmi",
+     "lines": 25,
+     "sha256": "0ffeb6ead2e053759847dd861d6ba31263971a4220fbfea4e5134e3f114ea72a"
+    },
+    {
+     "label": "Salmos",
+     "lines": 25,
+     "sha256": "824a9d8a987debacbfeab24c444bd75f65876f1c4ae92ccd9be12fba346796e8"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "318a0c02c41beacc5a697a392a42eda5cc78b94be06f412761d7dbda308cab82"
+    },
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "e67b8830a4ed8646fd6ca0743945241cf67bb8e10492bcb7e19b32ddeb8cf5dd"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "c188f535e327fbd3c2e3dea54f2318797ff94e8cab4a13488c14aebb48082c04"
+    },
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "49ae87c1f88b23d0c988a7dd8b33c2a9450597bfa9e7e42c7f13e79c5e844d11"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 22,
+     "sha256": "24c3a191576554869cfd48e1ffa45d091e59dc7cbcb2f2e26dbc3de2f43b6f67"
+    },
+    {
+     "label": "",
+     "lines": 22,
+     "sha256": "ddcbcc05031ec89707b396988678e900c79512bbdc7065561c36f5babf747732"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 14,
+     "sha256": "899e5cb9ded0c50c5e1d6606291287f2c6b4ed6af9164221963c09fbc977ad16"
+    },
+    {
+     "label": "",
+     "lines": 14,
+     "sha256": "3db1240a0c508e0c3045eea8d5e48ab99659b3a343cff01db744379d485162a9"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Capitulum Hymnus Versus",
+     "lines": 27,
+     "sha256": "ffb35e5cb9c0ecf3041af2fbd39be333eba71f37bee0c9066e8d53b87ce7381b"
+    },
+    {
+     "label": "Capítulo Hino Verso",
+     "lines": 26,
+     "sha256": "7605c4af0fdbaabebe46f081260261d54edaa494dd05605357ac9a2abb83038f"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Canticum: Benedictus",
+     "lines": 18,
+     "sha256": "2e9d39bf51fb498b925bd6a38bd86912492ef33d46b180fc72d73608c60f3916"
+    },
+    {
+     "label": "Cântico: Benedictus",
+     "lines": 18,
+     "sha256": "2878e10383ea3693f63512c1db301ac166419922bdfc9e98b1191d4f64d5ea54"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Preces Feriales",
+     "lines": 43,
+     "sha256": "f3f591d587152d8fed9a175f22ac03043459b7188d26518140ab2dd7bdc0c64c"
+    },
+    {
+     "label": "Preces Feriais",
+     "lines": 43,
+     "sha256": "84cb478b1e243608cded9866f8fbc9742ae63f447beaccc5a107a55720c503b7"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Oratio",
+     "lines": 13,
+     "sha256": "36d269bdfde03e4b069c482e8a302740ca02e2589480e3e1f5c3ee1a74fd9a31"
+    },
+    {
+     "label": "Oração",
+     "lines": 13,
+     "sha256": "7deaab5d72f77b0018c03e91217325b3de2dae85d4e703d282eecea8525db34c"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Conclusio",
+     "lines": 6,
+     "sha256": "46cff08dd4de0f13bbf5c2ee056434d74d0c00dc7d3d82347cdb7dacf5491ad7"
+    },
+    {
+     "label": "Conclusão",
+     "lines": 6,
+     "sha256": "ce0519fe34fa4fcc8defcc0656e35c72d6b50bb154f32cb121d9696ad19fbcd2"
+    }
+   ]
+  }
+ ],
+ "title": "Feria Quarta Quattuor Temporum Septembris ~ II. classis"
+}

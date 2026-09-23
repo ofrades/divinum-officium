@@ -1,0 +1,60 @@
+name: Divinum Officium API
+
+# The API is the engine. `cloudflare/service.py` runs the repository's own CGI
+# (Pofficium.pl, missa.pl) and hands the page to the reader's parser, so the
+# engine's output *is* the API's contract — and this workflow is what keeps it
+# honest. The fixtures run the same calls the routes use and compare against
+# small committed digests; the sweeps pin a whole year one day at a time; and
+# the last job asks the same questions of upstream's engine, so a change there
+# is visible here before a reader ever sees it.
+#
+# Everything runs inside the image the API answers with, pinned by the same
+# digest the Dockerfile uses: the tests cannot pass in a friendlier Perl than
+# production's.
+
+on:
+  push:
+    branches: [cloudflare-api]
+    paths:
+      - "cloudflare/**"
+      - "web/**"
+      - ".github/workflows/divinum-api.yml"
+  pull_request:
+    branches: [cloudflare-api]
+  schedule:
+    # Nightly, for a fork sitting quietly on a branch. Scheduled runs use the
+    # default branch's copy of this file, so this fires once it is on master.
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+env:
+  ENGINE_IMAGE: ghcr.io/divinumofficium/divinum-officium@sha256:e9646d9457e2b5e0f273d2fde087ffe596c3389a2605ce4e592d74f6fa0092d5
+
+jobs:
+  contract:
+    name: the engine's own answers
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/divinumofficium/divinum-officium@sha256:e9646d9457e2b5e0f273d2fde087ffe596c3389a2605ce4e592d74f6fa0092d5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fixtures
+        run: python3 cloudflare/tests/snapshot.py
+      - name: A year of Lauds, one digest per day
+        run: python3 cloudflare/tests/snapshot.py --sweep 2026 Laudes
+      - name: A year of Masses, one digest per day
+        run: python3 cloudflare/tests/snapshot.py --sweep 2026 mass
+
+  upstream:
+    name: what upstream's engine says now
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/divinumofficium/divinum-officium@sha256:e9646d9457e2b5e0f273d2fde087ffe596c3389a2605ce4e592d74f6fa0092d5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch upstream master
+        run: git clone --depth 1 https://github.com/divinumofficium/divinum-officium.git /tmp/upstream
+      - name: The same questions, of upstream
+        run: |
+          python3 cloudflare/tests/snapshot.py --repo /tmp/upstream --only 2026-09-23
+          python3 cloudflare/tests/snapshot.py --repo /tmp/upstream --sweep 2026 Laudes

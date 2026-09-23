@@ -223,7 +223,7 @@ def main(argv):
     parser_args.add_argument("--engine", choices=["local", "http"], default="local")
     parser_args.add_argument("--repo", default="/srv/divinum-officium", help="checkout for --engine local")
     parser_args.add_argument("--base-url", default="http://127.0.0.1:8080", help="server for --engine http")
-    parser_args.add_argument("--parser", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "divinum_officium.py"))
+    parser_args.add_argument("--parser", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "divinum_officium.py"))
     parser_args.add_argument("--from", dest="start", required=True)
     parser_args.add_argument("--to", dest="end", required=True)
     parser_args.add_argument("--version", default="Rubrics 1960 - 1960")

@@ -1,0 +1,171 @@
+{
+ "colourKey": "purple",
+ "digest": "52653b5902395d2a8fce109b83452fb4a9f838a75eb9c748348c396cf3810f8c",
+ "hourTitle": "Ad Vesperas",
+ "request": {
+  "date": "2026-02-18",
+  "hour": "Vesperae",
+  "kind": "office",
+  "lang1": "Latin",
+  "lang2": "Portugues",
+  "version": "Rubrics 1960 - 1960"
+ },
+ "sectionCount": 11,
+ "sections": [
+  {
+   "columns": [
+    {
+     "label": "Incipit",
+     "lines": 5,
+     "sha256": "a358d944d4ab86b2355f38b3713a63c0dbdea7f7e96c74032d5c115da6081448"
+    },
+    {
+     "label": "Início",
+     "lines": 5,
+     "sha256": "836c76a7ebe21b41598b78b1d1733ff84d27cd3ee5f6c2bbc3cb628be4e5e440"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Psalmi",
+     "lines": 12,
+     "sha256": "935077f2c2f0c05c9cf66bb7fd466186119a335ad65300482dd92dde88703395"
+    },
+    {
+     "label": "Salmos",
+     "lines": 12,
+     "sha256": "23262bc7e5d3f14b0a7c22354a357c3b582f077b5b20304de46ee92b850d0110"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 12,
+     "sha256": "fd622720dec865ca9f11b2085191c6768a94df650612292c148bfa108d9c9f8c"
+    },
+    {
+     "label": "",
+     "lines": 12,
+     "sha256": "ff3e998cc29a82d92036a2acd871286fcd03fd0713546cc4b8e42f0fd25b7113"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 13,
+     "sha256": "df32978be2ce46d76ba4bd6b26c227f251ca601272da0a62d1373d0f1859ab1a"
+    },
+    {
+     "label": "",
+     "lines": 13,
+     "sha256": "ca7c61ba9abc7b845e3979ab3151026a157ec5fbd3e9d48efd7531ec3d973778"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "733c318ba207383dd4b8e47106b91838665b26bd1972afb87fb7debd3114fbe3"
+    },
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "7179c1a4a208a4b70abe1e1a576d77fff170640782c944530058da55a0f88fbc"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "7720de6163dbe425acc23b76b30a7b5b67aa2df35ab6f4fde9e8abc0cac4fea8"
+    },
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "7733db037627bc605d2cf32efe82b8280b0517d337d34d62743a79dea3b9e7b2"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Capitulum Hymnus Versus",
+     "lines": 27,
+     "sha256": "bf2e911e2798b1dc9d404647488f606c0bbc9a5f57a4a06fef2ff5f522add855"
+    },
+    {
+     "label": "Capítulo Hino Verso",
+     "lines": 26,
+     "sha256": "2f346bb5d39277f1d87823d919bdab4181ef59b50289f0299e938e6b81b6485d"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Canticum: Magnificat",
+     "lines": 16,
+     "sha256": "867446a03eeb81c076db308a56f127bd703d128c61d04c7366e49a2f8de3013a"
+    },
+    {
+     "label": "Cântico: Magnificat",
+     "lines": 16,
+     "sha256": "55fafb9e504ae623887825e33b75ecb32c873d3add40026db1a1392a8b95d911"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Preces Feriales",
+     "lines": 43,
+     "sha256": "f3f591d587152d8fed9a175f22ac03043459b7188d26518140ab2dd7bdc0c64c"
+    },
+    {
+     "label": "Preces Feriais",
+     "lines": 43,
+     "sha256": "84cb478b1e243608cded9866f8fbc9742ae63f447beaccc5a107a55720c503b7"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Oratio",
+     "lines": 5,
+     "sha256": "d9e7e9c8ca187463a225f0a114c451d661a5cb76b57f96dcce5f74f678b023c2"
+    },
+    {
+     "label": "Oração",
+     "lines": 5,
+     "sha256": "e2291f028523e69e6470e0682a87ffc8ae71b62b30ea0270c15b14f2f2e442d8"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Conclusio",
+     "lines": 6,
+     "sha256": "46cff08dd4de0f13bbf5c2ee056434d74d0c00dc7d3d82347cdb7dacf5491ad7"
+    },
+    {
+     "label": "Conclusão",
+     "lines": 6,
+     "sha256": "ce0519fe34fa4fcc8defcc0656e35c72d6b50bb154f32cb121d9696ad19fbcd2"
+    }
+   ]
+  }
+ ],
+ "title": "Feria IV Cinerum ~ I. classis"
+}

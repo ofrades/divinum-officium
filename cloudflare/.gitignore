@@ -2,3 +2,5 @@ node_modules/
 .alchemy/
 .assets/
 tests/golden/
+
+__pycache__/

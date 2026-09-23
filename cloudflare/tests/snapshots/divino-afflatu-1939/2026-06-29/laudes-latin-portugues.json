@@ -1,0 +1,213 @@
+{
+ "colourKey": "red",
+ "digest": "6ea224eda9a2041d16853b9018d4c759fd268f8615126244050888ba3e0bb2c0",
+ "hourTitle": "Ad Laudes",
+ "request": {
+  "date": "2026-06-29",
+  "hour": "Laudes",
+  "kind": "office",
+  "lang1": "Latin",
+  "lang2": "Portugues",
+  "version": "Divino Afflatu - 1939"
+ },
+ "sectionCount": 14,
+ "sections": [
+  {
+   "columns": [
+    {
+     "label": "Incipit",
+     "lines": 9,
+     "sha256": "0dc3bd778dfb682de6af8b003ae9ccf9232ec008004cc1f9af21abfcabf1c20f"
+    },
+    {
+     "label": "Início",
+     "lines": 9,
+     "sha256": "4e3a94b34e1c63af249b269a9ca5bee8d40532c65f9fa864cddbdeb5afa5b0e8"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Psalmi",
+     "lines": 12,
+     "sha256": "c032e17706f1cb3525445fe2bca422286efef0469a5e174718515fb4aca3db7a"
+    },
+    {
+     "label": "Salmos",
+     "lines": 12,
+     "sha256": "e399ce82a9491dfaa70517168a863846cb4af6fddd644dcc85b630fbc68653ff"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "292d3f6232d9b6bbd534b8e0ca813ef517f1853d075ef587569c46a528f0af33"
+    },
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "17c1ec31e8a4fd579baf80ab1e887e57fcd7e7eaf1d788b3ed39ccc0bece3e5e"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "fed6526e9d6df17e3ad1fedcf336404111653647b2ac68495de330536ea3f8ca"
+    },
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "d67a46917bd1d266ce5b5f48af1a572d6fb922dac999d0efac3ff8028ec19797"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "14bdf9ff32795f06dd35cd792425cd7fa03f3d97b21ff1a2f633bead50a58eb2"
+    },
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "7eb0612a236e93e1011cbc6100de3f9b796b5278e896ca6b5f3e3a82cc29a659"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "05f621b21bb7b4a7dd43840217e04447393d56fc368b217eabb3f86815e3cd8f"
+    },
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "1e2b4d1aa25cef35e21fdc52926246d7b2d75d1bd3f7bd1c9752e601b000d013"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Capitulum Hymnus Versus",
+     "lines": 19,
+     "sha256": "62ba84e7263e68c69285c085d7c0a27c42a96a1736bc9845f30912c6ceb45800"
+    },
+    {
+     "label": "Capítulo Hino Verso",
+     "lines": 19,
+     "sha256": "add6362c525706fa6c9b34ead95548c0c40a7195684b6224bb7a32865a5c81cc"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Canticum: Benedictus",
+     "lines": 18,
+     "sha256": "502eaa7808b3fa4b95d132b13acccd61f29d37b4d4f47ead9ee7b104811b122e"
+    },
+    {
+     "label": "Cântico: Benedictus",
+     "lines": 18,
+     "sha256": "1000748a4370489a019204f291b0c7917c5d5dcd53f6d33e6d830f493f7d7f5b"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "3affc01d8172964141934cb9ad316fd201cc7945bab9a6afdbd61816b55e4ce4"
+    },
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "405bb5e30cffc9a3101e9db269622abe328bab7c37a47580222efe32d331f594"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Oratio",
+     "lines": 6,
+     "sha256": "85549331e89ed959058108d8d409268da50f20dce9cb36110afe6f9f8f23f266"
+    },
+    {
+     "label": "Oração",
+     "lines": 6,
+     "sha256": "0f7fd30de9ac410fb69cd598b0270e6445fb1f62230a3ce059d684db09a8d16b"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "c123a1b6136df472663c76d730a2f1269333fac9ea6d5190d9eb36b4e3fbd15a"
+    },
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "85b17aab489fa7831d8c1059cfc240031427c81112028ccd3f7a604f3e92a742"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Conclusio",
+     "lines": 6,
+     "sha256": "46cff08dd4de0f13bbf5c2ee056434d74d0c00dc7d3d82347cdb7dacf5491ad7"
+    },
+    {
+     "label": "Conclusão",
+     "lines": 6,
+     "sha256": "ce0519fe34fa4fcc8defcc0656e35c72d6b50bb154f32cb121d9696ad19fbcd2"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 4,
+     "sha256": "815f8f5ec405d6a76371125f35fb44333dd84334d416829c66680c2a3f80b9b2"
+    },
+    {
+     "label": "",
+     "lines": 4,
+     "sha256": "40df132ea151048adb74401530105c7cb1ae51116b8496271c913975c4f3e042"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Antiphona finalis B.M.V.",
+     "lines": 16,
+     "sha256": "7037aec5d9863a76b94d56fb3c9f1a82dba3c61158e7a1270759c4644c41be39"
+    },
+    {
+     "label": "Antífona final da Bem-Aventurada Virgem Maria",
+     "lines": 16,
+     "sha256": "44275d1a0235bca2b80cff3ecb52e2e97a34985c3fcfedb69abd59a70242cd30"
+    }
+   ]
+  }
+ ],
+ "title": "SS. Apostolorum Petri et Pauli ~ Duplex I. classis"
+}

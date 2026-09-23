@@ -1,0 +1,171 @@
+{
+ "colourKey": "blue",
+ "digest": "841eb013c24ddd52c5d86e4c4a5e3fa315a246323641357ebac851ee85b10e16",
+ "hourTitle": "Ad Vesperas",
+ "request": {
+  "date": "2026-08-15",
+  "hour": "Vesperae",
+  "kind": "office",
+  "lang1": "Latin",
+  "lang2": "Portugues",
+  "version": "Rubrics 1960 - 1960"
+ },
+ "sectionCount": 11,
+ "sections": [
+  {
+   "columns": [
+    {
+     "label": "Incipit",
+     "lines": 5,
+     "sha256": "6bf7408f733721fb5b8e3cc8fc2f3fd9bcf4eddef96bbf15fa8df42d781e5fbe"
+    },
+    {
+     "label": "Início",
+     "lines": 5,
+     "sha256": "9b8750da5cfe8b1ece20336f2f8199790cc36076e3e9747c7d30b0f01f9cb944"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Psalmi",
+     "lines": 13,
+     "sha256": "c91c9bc30a5b0e8cc35cec516ad75684e5dbf53b7a8fafa2214b4b6dd8a0b467"
+    },
+    {
+     "label": "Salmos",
+     "lines": 13,
+     "sha256": "e89e123a55bfad257b0a45e83c8dea5f2770e9f5f1258dcd9a692ee5658c7504"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 13,
+     "sha256": "25055f6130e5246f2acc2817a819071648be4052718cf2a831f768ee5a35fdf0"
+    },
+    {
+     "label": "",
+     "lines": 13,
+     "sha256": "9687aaae008fa9fd4d42a155b56216bf14a2edf8d24db56955a9e6e5bb86f0b3"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 14,
+     "sha256": "59d679a32693198f152ceee42b6018b8a767b12847d8f9c7e9e96c8137e35cb9"
+    },
+    {
+     "label": "",
+     "lines": 14,
+     "sha256": "16232f52976a3c9ebdf7c3c57cda0901310d5c74b6851687d3e60bd6ec11704b"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 11,
+     "sha256": "a20aeeaa58049c54e8d23e382cb9ad8a908c48c75c6f2b73d46b39f27636b264"
+    },
+    {
+     "label": "",
+     "lines": 11,
+     "sha256": "8c72e4a54196ab056a4f40fd9506a3a284ec6f895b7e2e58ecf66caa0a6258bf"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 14,
+     "sha256": "f3adb11fb6312528317f15c3a1a4463e1d4bb6e6881ef449664710b68e310a05"
+    },
+    {
+     "label": "",
+     "lines": 14,
+     "sha256": "61ffa83b24fa9ff731cbdb80e5bb8f2a763ee6fe727fd01b6b840c07bda2227e"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Capitulum Hymnus Versus",
+     "lines": 36,
+     "sha256": "1c27fce78189f4339d602177851eddcbe0548e96d83f102a80dd144942485d15"
+    },
+    {
+     "label": "Capítulo Hino Verso",
+     "lines": 36,
+     "sha256": "7767406ad05aef1456ab55216083f89b4321ae2c97d00fdfa4778ef24361e536"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Canticum: Magnificat",
+     "lines": 16,
+     "sha256": "28ee2c6ddc38b8d7d0b3408a887f21232c947d212700aeb4bd44fb13952a8d6a"
+    },
+    {
+     "label": "Cântico: Magnificat",
+     "lines": 16,
+     "sha256": "676c15bdc798618acbd941dff89da6badf182a63518a64d64a1b3d975fc5947e"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "3affc01d8172964141934cb9ad316fd201cc7945bab9a6afdbd61816b55e4ce4"
+    },
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "405bb5e30cffc9a3101e9db269622abe328bab7c37a47580222efe32d331f594"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Oratio",
+     "lines": 14,
+     "sha256": "3bad868ba9e20feb20f94a413b5a207315a363dc2cd4cc3d4be1ad7b2980e080"
+    },
+    {
+     "label": "Oração",
+     "lines": 14,
+     "sha256": "ccf1b9828ff900b2930b5962d961fe9e30d23b2063f067beb3329ad9f339315f"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Conclusio",
+     "lines": 6,
+     "sha256": "46cff08dd4de0f13bbf5c2ee056434d74d0c00dc7d3d82347cdb7dacf5491ad7"
+    },
+    {
+     "label": "Conclusão",
+     "lines": 6,
+     "sha256": "ce0519fe34fa4fcc8defcc0656e35c72d6b50bb154f32cb121d9696ad19fbcd2"
+    }
+   ]
+  }
+ ],
+ "title": "In Assumptione Beatæ Mariæ Virginis ~ I. classis"
+}

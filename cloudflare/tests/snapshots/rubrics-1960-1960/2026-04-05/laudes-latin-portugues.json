@@ -1,0 +1,185 @@
+{
+ "colourKey": "black",
+ "digest": "fe393de4454347268d9b8294577e898b3459583e43890d981bd9c51aea516787",
+ "hourTitle": "Ad Laudes",
+ "request": {
+  "date": "2026-04-05",
+  "hour": "Laudes",
+  "kind": "office",
+  "lang1": "Latin",
+  "lang2": "Portugues",
+  "version": "Rubrics 1960 - 1960"
+ },
+ "sectionCount": 12,
+ "sections": [
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 2,
+     "sha256": "4a6451945bbccdd174c385fdbc283636498cb7fdde00e4be6a02edf0f3a1ea76"
+    },
+    {
+     "label": "",
+     "lines": 2,
+     "sha256": "5789930f9ab444585b620992219cef9e9865f6d5861224478a3e010e864280a3"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Incipit",
+     "lines": 5,
+     "sha256": "6bf7408f733721fb5b8e3cc8fc2f3fd9bcf4eddef96bbf15fa8df42d781e5fbe"
+    },
+    {
+     "label": "Início",
+     "lines": 5,
+     "sha256": "9b8750da5cfe8b1ece20336f2f8199790cc36076e3e9747c7d30b0f01f9cb944"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Psalmi",
+     "lines": 12,
+     "sha256": "2edbf2555d264eb37424a215a99d34246ce34e253db93d4a7ac30e42e24c8685"
+    },
+    {
+     "label": "Salmos",
+     "lines": 12,
+     "sha256": "a3a18f574fdaeecf68a69a699f8f99e2a16f620f157bdf7667964b76a015cca5"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "2175b280e5964b89a99fe7c1cc84dcda7e9113022bdc139147dbbea585322f52"
+    },
+    {
+     "label": "",
+     "lines": 10,
+     "sha256": "df1a13ec711b9da83293da30a7d62de45e96c7e4603b2e5d35ae45053fef41e6"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "f5f9e67028a8556b45c86057500c8a5b48d06569715d7d03649d506277cf8a7d"
+    },
+    {
+     "label": "",
+     "lines": 15,
+     "sha256": "f272e9317963f4441e2697e792058eb6f936135b8bd57105a40776bf1aec51cc"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "8ac8ee77fb6a097c52a0930d2724e730f0b05c08d9ee4e3ef9c57640fd39536c"
+    },
+    {
+     "label": "",
+     "lines": 24,
+     "sha256": "ffc80ace4bd9ad3b9834d97a54a7667ec28bee3131a61bbd42a74637e9581110"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "bcaa79b90fc2f677a44f86e51f21ff3e0f4041b77b2c8a83ce118ffc5f0350a4"
+    },
+    {
+     "label": "",
+     "lines": 19,
+     "sha256": "42f02fd5e95531b50b0d9a1d9db564f430e3208f98e4196ac1c91ca7edd897c6"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Versus (In loco Capituli)",
+     "lines": 1,
+     "sha256": "4badd94a4cc61f2de24cda10bcf0a890b183625249117991eb6a373fc12a0113"
+    },
+    {
+     "label": "Versículo (em lugar do Capítulo)",
+     "lines": 1,
+     "sha256": "1935039e2b0fff7550c7705e7ce6e45d9dd966929998372b768101aef7da9a3b"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Canticum: Benedictus",
+     "lines": 18,
+     "sha256": "3a7fb82f47cae30d861c39d1a3539a9edb32676adc0d72fea2bb070c79f01416"
+    },
+    {
+     "label": "Cântico: Benedictus",
+     "lines": 18,
+     "sha256": "ea5ed21db2804bdaf877fd77a7e025535a333429e1f0e28ce78f4b7c36837c6f"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "3affc01d8172964141934cb9ad316fd201cc7945bab9a6afdbd61816b55e4ce4"
+    },
+    {
+     "label": "",
+     "lines": 1,
+     "sha256": "405bb5e30cffc9a3101e9db269622abe328bab7c37a47580222efe32d331f594"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Oratio",
+     "lines": 6,
+     "sha256": "4b12e202761ef66e7804da3c6fa3085ada025b92c2acd0bbd0c3cbd4a15f93d1"
+    },
+    {
+     "label": "Oração",
+     "lines": 6,
+     "sha256": "f80d9dad87c708dfe1b3e5c77dd2199112fdd8264c3d846907b987459ab793d3"
+    }
+   ]
+  },
+  {
+   "columns": [
+    {
+     "label": "Conclusio",
+     "lines": 6,
+     "sha256": "55074f3b78f616a338269745290d6a51083dafcbc48c6e7cd40d1b7978b5d3e1"
+    },
+    {
+     "label": "Conclusão",
+     "lines": 6,
+     "sha256": "b9c27b596b49a379768e6daf563772ef90a073d80614e242b66bccb0a2a8da0d"
+    }
+   ]
+  }
+ ],
+ "title": "Dominica Resurrectionis ~ I. classis"
+}

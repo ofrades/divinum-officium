@@ -16,8 +16,13 @@ upstream Perl image, which carries python3 for exactly this reason.
 Routes:
 
   GET /health
+  GET /v1/day/<YYYY-MM-DD>?version=&lang1=&lang2=
   GET /v1/office/<YYYY-MM-DD>/<Hour>?version=&lang1=&lang2=
   GET /v1/mass/<YYYY-MM-DD>?version=&lang1=&lang2=&votive=&propers=1
+
+The snapshot suite (tests/snapshot.py) drives the same `Engine.office`,
+`Engine.mass` and `Engine.day` calls, so the tests pin the API's contract
+rather than some parallel path into the engine.
 """
 
 from __future__ import annotations
@@ -53,6 +58,10 @@ RITES = {
 DEFAULT_VERSION = "Rubrics 1960 - 1960"
 DEFAULT_LANG1 = "Latin"
 DEFAULT_LANG2 = "English"
+
+# The hour the day itself is read from: cheapest, and it carries the day's
+# headline and colour like any other.
+DAY_HOUR = "Tertia"
 
 
 def load_parser(path: str):
@@ -112,37 +121,103 @@ class Engine:
         payload["source"] = "engine"
         return payload
 
+    # The three questions the API answers. The routes and the snapshot suite
+    # both come through here, so there is one path into the engine.
+
+    def office(
+        self,
+        date: datetime,
+        hour: str,
+        version: str = DEFAULT_VERSION,
+        lang1: str = DEFAULT_LANG1,
+        lang2: str = DEFAULT_LANG2,
+    ) -> dict:
+        return self.payload(
+            "office",
+            {
+                "baseUrl": "engine",
+                "rite": "office",
+                "date": date.strftime("%Y-%m-%d"),
+                "hour": hour,
+                "version": version,
+                "lang1": lang1,
+                "lang2": lang2,
+                "votive": "",
+                "propers": False,
+            },
+            {
+                "command": "pray" + hour,
+                "date1": date.strftime("%m-%d-%Y"),
+                "version": version,
+                "lang1": lang1,
+                "lang2": lang2,
+                "content": "1",
+            },
+        )
+
+    def mass(
+        self,
+        date: datetime,
+        version: str = DEFAULT_VERSION,
+        lang1: str = DEFAULT_LANG1,
+        lang2: str = DEFAULT_LANG2,
+        votive: str = "Hodie",
+        propers: bool = False,
+    ) -> dict:
+        params = {
+            "command": "pray",
+            "date1": date.strftime("%m-%d-%Y"),
+            "version": version,
+            "lang1": lang1,
+            "lang2": lang2,
+            "content": "1",
+            "Propers": "1" if propers else "0",
+        }
+        if votive and votive != "Hodie":
+            params["votive"] = votive
+        payload = self.payload(
+            "mass",
+            {
+                "baseUrl": "engine",
+                "rite": "mass",
+                "date": date.strftime("%Y-%m-%d"),
+                "hour": "",
+                "version": version,
+                "lang1": lang1,
+                "lang2": lang2,
+                "votive": votive,
+                "propers": propers,
+            },
+            params,
+        )
+        # The missal has no hours: the reader shows the day's texts.
+        payload["hour"] = ""
+        return payload
+
+    def day(
+        self,
+        date: datetime,
+        version: str = DEFAULT_VERSION,
+        lang1: str = DEFAULT_LANG1,
+        lang2: str = DEFAULT_LANG2,
+    ) -> dict:
+        payload = self.office(date, DAY_HOUR, version, lang1, lang2)
+        return {
+            "ok": bool(payload.get("sections")),
+            "date": payload.get("date"),
+            "version": version,
+            "headline": payload.get("title"),
+            "colourKey": payload.get("colorKey"),
+            "colourName": payload.get("colorName"),
+            "commemorations": payload.get("commemorations") or [],
+            "hourTitle": payload.get("hourTitle"),
+            "hour": DAY_HOUR,
+            "source": "engine",
+        }
+
 
 def parse_date(value: str) -> datetime:
     return datetime.strptime(value, "%Y-%m-%d")
-
-
-def office_params(date: datetime, hour: str, version: str, lang1: str, lang2: str) -> dict:
-    return {
-        "command": "pray" + hour,
-        "date1": date.strftime("%m-%d-%Y"),
-        "version": version,
-        "lang1": lang1,
-        "lang2": lang2,
-        "content": "1",
-    }
-
-
-def mass_params(
-    date: datetime, version: str, lang1: str, lang2: str, votive: str, propers: bool
-) -> dict:
-    params = {
-        "command": "pray",
-        "date1": date.strftime("%m-%d-%Y"),
-        "version": version,
-        "lang1": lang1,
-        "lang2": lang2,
-        "content": "1",
-        "Propers": "1" if propers else "0",
-    }
-    if votive and votive != "Hodie":
-        params["votive"] = votive
-    return params
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -150,7 +225,6 @@ class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     engine: Engine = None  # set by main()
 
-    # No default access log line per request: the Worker logs what matters.
     def log_message(self, format: str, *args) -> None:
         sys.stderr.write("%s %s\n" % (self.address_string(), format % args))
 
@@ -174,116 +248,13 @@ class Handler(BaseHTTPRequestHandler):
         except Exception as error:  # one bad request must not end the service
             self.send_json(502, {"ok": False, "error": str(error)[:400]})
 
-    def route(self) -> None:
+    def query(self) -> dict:
         parsed = urlparse(self.path)
-        query = {key: values[0] for key, values in parse_qs(parsed.query).items()}
-        path = parsed.path.rstrip("/") or "/"
+        self.parts = [piece for piece in parsed.path.split("/") if piece]
+        return {key: values[0] for key, values in parse_qs(parsed.query).items()}
 
-        if path == "/health":
-            self.send_json(200, {"ok": True, "engine": self.engine.repo, "hours": HOURS})
-            return
-
-        parts = [piece for piece in path.split("/") if piece]
-
-        # /v1/day/<date> — the day itself: headline, colour, commemorations.
-        # Tertia is the cheapest hour that carries them, so it is the one the
-        # engine is asked for.
-        if len(parts) == 3 and parts[0] == "v1" and parts[1] == "day":
-            date = parse_date(parts[2])
-            version = query.get("version") or DEFAULT_VERSION
-            lang1 = query.get("lang1") or DEFAULT_LANG1
-            lang2 = query.get("lang2") or DEFAULT_LANG2
-            payload = self.engine.payload(
-                "office",
-                {
-                    "baseUrl": "engine",
-                    "rite": "office",
-                    "date": date.strftime("%Y-%m-%d"),
-                    "hour": "Tertia",
-                    "version": version,
-                    "lang1": lang1,
-                    "lang2": lang2,
-                    "votive": "",
-                    "propers": False,
-                },
-                office_params(date, "Tertia", version, lang1, lang2),
-            )
-            self.send_json(
-                200 if payload.get("sections") else 502,
-                {
-                    "ok": bool(payload.get("sections")),
-                    "date": payload.get("date"),
-                    "version": version,
-                    "headline": payload.get("title"),
-                    "colourKey": payload.get("colorKey"),
-                    "colourName": payload.get("colorName"),
-                    "commemorations": payload.get("commemorations") or [],
-                    "hourTitle": payload.get("hourTitle"),
-                    "hour": "Tertia",
-                    "source": "engine",
-                },
-            )
-            return
-
-        # /v1/office/<date>/<hour>
-        if len(parts) == 4 and parts[0] == "v1" and parts[1] == "office":
-            date = parse_date(parts[2])  # ValueError → 502, caught above
-            hour = next((name for name in HOURS if name.lower() == parts[3].lower()), None)
-            if hour is None:
-                self.send_json(404, {"ok": False, "error": f"unknown hour: {parts[3]}"})
-                return
-            version = query.get("version") or DEFAULT_VERSION
-            lang1 = query.get("lang1") or DEFAULT_LANG1
-            lang2 = query.get("lang2") or DEFAULT_LANG2
-            payload = self.engine.payload(
-                "office",
-                {
-                    "baseUrl": "engine",
-                    "rite": "office",
-                    "date": date.strftime("%Y-%m-%d"),
-                    "hour": hour,
-                    "version": version,
-                    "lang1": lang1,
-                    "lang2": lang2,
-                    "votive": "",
-                    "propers": False,
-                },
-                office_params(date, hour, version, lang1, lang2),
-            )
-            self.send_payload(payload)
-            return
-
-        # /v1/mass/<date>
-        if len(parts) == 3 and parts[0] == "v1" and parts[1] == "mass":
-            date = parse_date(parts[2])
-            version = query.get("version") or DEFAULT_VERSION
-            lang1 = query.get("lang1") or DEFAULT_LANG1
-            lang2 = query.get("lang2") or DEFAULT_LANG2
-            votive = query.get("votive") or "Hodie"
-            propers = query.get("propers") in ("1", "true", "yes")
-            payload = self.engine.payload(
-                "mass",
-                {
-                    "baseUrl": "engine",
-                    "rite": "mass",
-                    "date": date.strftime("%Y-%m-%d"),
-                    "hour": "",
-                    "version": version,
-                    "lang1": lang1,
-                    "lang2": lang2,
-                    "votive": votive,
-                    "propers": propers,
-                },
-                mass_params(date, version, lang1, lang2, votive, propers),
-            )
-            # The missal has no hours: the plugin reads the day's texts.
-            payload["hour"] = ""
-            self.send_payload(payload)
-            return
-
-        self.send_json(404, {"ok": False, "error": f"no route: {path}"})
-
-    def send_payload(self, payload: dict) -> None:
+    def ask(self, payload: dict) -> None:
+        """A payload with no sections is not an answer; say so plainly."""
         if not payload.get("sections"):
             payload["ok"] = False
             payload["error"] = (
@@ -294,13 +265,52 @@ class Handler(BaseHTTPRequestHandler):
         payload["ok"] = True
         self.send_json(200, payload)
 
+    def route(self) -> None:
+        query = self.query()
+        version = query.get("version") or DEFAULT_VERSION
+        lang1 = query.get("lang1") or DEFAULT_LANG1
+        lang2 = query.get("lang2") or DEFAULT_LANG2
+
+        if self.parts == ["health"]:
+            self.send_json(200, {"ok": True, "engine": self.engine.repo, "hours": HOURS})
+            return
+
+        if len(self.parts) == 3 and self.parts[:2] == ["v1", "day"]:
+            self.send_json(200, self.engine.day(parse_date(self.parts[2]), version, lang1, lang2))
+            return
+
+        if len(self.parts) == 4 and self.parts[:2] == ["v1", "office"]:
+            date = parse_date(self.parts[2])
+            hour = next((name for name in HOURS if name.lower() == self.parts[3].lower()), None)
+            if hour is None:
+                self.send_json(404, {"ok": False, "error": f"unknown hour: {self.parts[3]}"})
+                return
+            self.ask(self.engine.office(date, hour, version, lang1, lang2))
+            return
+
+        if len(self.parts) == 3 and self.parts[:2] == ["v1", "mass"]:
+            self.ask(
+                self.engine.mass(
+                    parse_date(self.parts[2]),
+                    version,
+                    lang1,
+                    lang2,
+                    query.get("votive") or "Hodie",
+                    query.get("propers") in ("1", "true", "yes"),
+                )
+            )
+            return
+
+        path = "/" + "/".join(self.parts)
+        self.send_json(404, {"ok": False, "error": f"no route: {path}"})
+
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repo", default="/var/www", help="the engine's web root")
     here = os.path.dirname(os.path.abspath(__file__))
     beside = os.path.join(here, "divinum_officium.py")
     vendored = os.path.join(here, "tools", "divinum_officium.py")
+    parser.add_argument("--repo", default="/var/www", help="the engine's web root")
     parser.add_argument(
         "--parser",
         default=beside if os.path.exists(beside) else vendored,
