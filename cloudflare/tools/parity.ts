@@ -20,6 +20,7 @@ interface Args {
   assets: string;
   hour: string;
   limit: number;
+  diff: string;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -29,6 +30,7 @@ function parseArgs(argv: string[]): Args {
     assets: join(import.meta.dirname, "..", ".assets"),
     hour: "Prima",
     limit: 0,
+    diff: "",
   };
   for (let index = 0; index < argv.length; index += 2) {
     const key = argv[index].replace(/^--/, "");
@@ -133,6 +135,7 @@ async function main() {
   let lineTotal = 0;
   let daysWithSectionShape = 0;
   const examples: string[] = [];
+  let diffShown = 0;
   const byLabel = new Map<string, { want: number; matched: number }>();
 
   for (const file of files) {
@@ -184,6 +187,19 @@ async function main() {
       let matched = 0;
       for (let line = 0; line < Math.min(want.lines.length, got.lines.length); line++) {
         if (want.lines[line] === got.lines[line]) matched++;
+      }
+      if (args.diff !== "" && want.label === args.diff && diffShown < 12) {
+        for (let line = 0; line < Math.max(want.lines.length, got.lines.length) && diffShown < 12; line++) {
+          if (want.lines[line] === got.lines[line]) continue;
+          diffShown++;
+          if (want.lines[line] !== undefined && got.lines[line] === undefined) {
+            console.log(`  [${line}] +corpus ${want.lines[line]}`);
+          } else if (got.lines[line] !== undefined && want.lines[line] === undefined) {
+            console.log(`  [${line}] +mine   ${got.lines[line]}`);
+          } else if (want.lines[line] !== undefined && got.lines[line] !== undefined) {
+            console.log(`  [${line}] corpus  ${want.lines[line]}\n       mine    ${got.lines[line]}`);
+          }
+        }
       }
       lineMatches += matched;
       const label = want.label;

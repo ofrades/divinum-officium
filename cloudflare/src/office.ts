@@ -2,7 +2,7 @@ import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
 import { lectioBrevis, littleChapter, minorOratio } from "./chapter";
 import { martyrology } from "./martyrology";
-import { psalmodyRows } from "./psalterium";
+import { majorPsalmodyRows, psalmodyRows } from "./psalterium";
 import { specialBody } from "./special";
 import { renderBody, renderLine, type RenderContext } from "./render";
 import { parseScript, scriptBlocks, scriptSections, type ScriptBlock, type TextSource } from "./script";
@@ -203,6 +203,27 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
   for (const block of blocks) {
     // The psalmody is the one block that becomes several rows: one per psalm,
     // the first carrying the label and the antiphon, the last the repeat.
+    // Lauds and Vespers: the psalmody is generated, one row per antiphon with
+    // its psalm or psalms.
+    if (/^Psalmi$/i.test(block.label) && (hour === "Laudes" || hour === "Vesperae")) {
+      const rows = await majorPsalmodyRows(
+        request.source,
+        request.lang1,
+        hour,
+        weekday,
+        selection.laudes ?? 1,
+        context,
+        renderContext,
+      );
+      if (rows) {
+        for (const [index, lines] of rows.entries()) {
+          sections.push({
+            columns: [{ label: index === 0 ? block.label : "", note: "", lines }, { label: "", note: "", lines: [] }],
+          });
+        }
+        continue;
+      }
+    }
     if (/^Psalmi$/i.test(block.label)) {
       const rows = await psalmodyRows(
         request.source,

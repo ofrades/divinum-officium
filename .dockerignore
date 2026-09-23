@@ -1,0 +1,7 @@
+# The API's container copies `web/` and two files out of `cloudflare/`; nothing
+# else belongs in the build context.
+.git
+**/node_modules
+**/.assets
+**/*.log
+cloudflare/tests

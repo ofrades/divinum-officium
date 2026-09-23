@@ -1,6 +1,7 @@
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as Effect from "effect/Effect";
+import type { Engine } from "./src/worker";
 
 // Open while the API is only yours; one variable closes it again.
 //
@@ -10,16 +11,16 @@ import * as Effect from "effect/Effect";
 // The Access resources (service token, policy, application) are declared either
 // way, so closing the door later costs nothing but the variable — the token the
 // readers use already exists.
-
+//
 // A private API for the Divinum Officium texts.
 //
-// No container: the repository's own files are served to the Worker as static
-// assets, and the Worker assembles an office or a Mass from them per request.
-// The calendar artifact (built at deploy time from the engine's own
-// precedence — see tools/build_calendar.py) says which file wins a date.
+// The engine answers: the Divinum Officium Perl CGI, in a container built from
+// the repository's own image plus the JSON service in front of it (see
+// Dockerfile and service.py). The Worker is the door — it normalises the
+// version, keeps the workers.dev hostname, and applies Access when asked.
 //
-// Cloudflare Access keeps the workers.dev hostname private: readers present a
-// service token, which this stack creates and prints.
+// Nothing is ported, pre-rendered or stored: every request runs the engine
+// against the repository's files and returns what the website itself would.
 export default Alchemy.Stack(
   "DivinumOfficiumApi",
   {
@@ -42,12 +43,21 @@ export default Alchemy.Stack(
 
     const requireAuth = process.env.API_REQUIRE_AUTH === "1";
 
+    // The engine's container. `context` is the repository root, so the image
+    // carries this fork's own engine and texts; `instances: 1` keeps one
+    // container warm so a request never waits for a cold start. Set it to 0 to
+    // scale to zero and trade the first request's seconds for the bill.
+    const engine = Cloudflare.Container<Engine>("Engine", {
+      dockerfile: "cloudflare/Dockerfile",
+      context: "..",
+      instanceType: "basic",
+      instances: 1,
+    });
+
     const api = yield* Cloudflare.Worker("Api", {
       main: "./src/worker.ts",
       workersDev: true,
-      // The texts and the calendar artifact, straight out of the repository.
-      // Built by tools/sync_assets.py and tools/build_calendar.py.
-      assets: { directory: "./.assets" },
+      env: { Engine: engine },
       ...(requireAuth
         ? {
             access: {

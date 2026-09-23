@@ -305,3 +305,84 @@ async function borrowedFileRule(
   }
   return "";
 }
+
+// Lauds and Vespers keep their psalmody in the same file but with one line per
+// psalm, each carrying its own antiphon: `Antiphon;;psalm`. The Gospel canticle
+// is not here — the engine builds that at the `#Canticum` marker — so this is
+// only the psalms.
+
+export interface MajorEntry {
+  antiphon: string;
+  psalms: PsalmSpec[];
+}
+
+/** The `Day<n> Laudes<1|2>|Vespera` section's entries. */
+export function parseMajorPlan(
+  text: string,
+  hour: string,
+  weekday: number,
+  laudes: number,
+): MajorEntry[] | null {
+  const name = hour === "Laudes" ? `Laudes${laudes === 2 ? 2 : 1}` : "Vespera";
+  const section = sectionBody(parseSections(text), `Day${weekday} ${name}`);
+  if (!section) return null;
+
+  const entries: MajorEntry[] = [];
+  for (const line of section) {
+    const trimmed = line.trim();
+    if (trimmed === "" || trimmed.startsWith("[")) continue;
+    const split = trimmed.split(";;");
+    if (split.length < 2) continue;
+    const psalms = parseSpecs(split[1]);
+    if (psalms.length === 0) continue;
+    entries.push({ antiphon: split[0].trim(), psalms });
+  }
+  return entries.length > 0 ? entries : null;
+}
+
+export async function majorPsalmodyRows(
+  source: TextSource,
+  lang: string,
+  hour: string,
+  weekday: number,
+  laudes: number,
+  context: ConditionContext,
+  render: RenderContext,
+): Promise<OfficeLine[][] | null> {
+  if (hour !== "Laudes" && hour !== "Vesperae") return null;
+
+  const text =
+    (await source.read(`horas/${lang}/Psalterium/Psalmi/Psalmi major.txt`)) ??
+    (await source.read("horas/Latin/Psalterium/Psalmi/Psalmi major.txt"));
+  if (text === null) return null;
+
+  const entries = parseMajorPlan(text, hour, weekday, laudes);
+  if (entries === null) return null;
+
+  const close = await doxology(source, lang, "", context, render);
+  const rows: OfficeLine[][] = [];
+
+  for (const entry of entries) {
+    const lines: OfficeLine[] = [];
+    if (entry.antiphon !== "") {
+      const antiphon = renderLine(`Ant. ${entry.antiphon}`, render);
+      if (antiphon) lines.push(antiphon);
+    }
+    for (const [index, spec] of entry.psalms.entries()) {
+      const range =
+        spec.from && spec.to
+          ? `(${spec.from.verse}${spec.from.sub ?? ""}-${spec.to.verse}${spec.to.sub ?? ""})`
+          : "";
+      lines.push({ k: "title", text: `Psalmus ${spec.number}${range}`, after: `[${index + 1}]` });
+      const verses = await psalmVerses(source, lang, spec, context);
+      if (verses) lines.push(...renderBody(verses, render));
+      lines.push(...close);
+    }
+    if (entry.antiphon !== "") {
+      const repeated = entry.antiphon.replace(/\s*\*\s*/, " ").trim();
+      lines.push({ k: "rubric", marker: "Ant.", text: repeated });
+    }
+    rows.push(lines);
+  }
+  return rows;
+}
