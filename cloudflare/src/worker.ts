@@ -8,7 +8,9 @@ import {
   VERSIONS,
   VOTIVES,
   normalizeCalendar,
+  normalizeLanguage,
   normalizeVersion,
+  normalizeVotive,
   slug,
 } from "./versions";
 
@@ -27,6 +29,7 @@ import {
 // the request over, so nothing is assembled, ported or stored here.
 interface Env {
   Engine: DurableObjectNamespace<Engine>;
+  API_RATE_LIMIT: RateLimit;
 }
 
 /** The engine, in its container: one process, the repository behind it. */
@@ -37,11 +40,21 @@ export class Engine extends Container<Env> {
   sleepAfter = "20m";
 }
 
-const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
-const HTML_HEADERS = { "content-type": "text/html; charset=utf-8" };
+const JSON_HEADERS = {
+  "content-type": "application/json; charset=utf-8",
+  "x-content-type-options": "nosniff",
+};
+const HTML_HEADERS = {
+  "content-type": "text/html; charset=utf-8",
+  "cache-control": "public, max-age=300, s-maxage=300, stale-while-revalidate=60",
+  "x-content-type-options": "nosniff",
+};
+const INDEX_CACHE = "public, max-age=3600, s-maxage=3600, stale-while-revalidate=300";
 
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
+function json(body: unknown, status = 200, cacheControl = "no-store"): Response {
+  const headers = new Headers(JSON_HEADERS);
+  headers.set("cache-control", cacheControl);
+  return new Response(JSON.stringify(body), { status, headers });
 }
 
 export default {
@@ -63,7 +76,17 @@ export default {
         votives: VOTIVES,
         massForms: MASS_FORMS,
         hours: HOURS,
-      });
+      }, 200, INDEX_CACHE);
+    }
+
+    if (route.startsWith("/v1/")) {
+      const clientKey = request.headers.get("CF-Connecting-IP") || "anonymous";
+      const rate = await env.API_RATE_LIMIT.limit({ key: clientKey });
+      if (!rate.success) {
+        const response = json({ ok: false, error: "rate limit exceeded" }, 429);
+        response.headers.set("retry-after", "60");
+        return response;
+      }
     }
 
     if (route === "/health" || route.startsWith("/v1/")) {
@@ -73,6 +96,15 @@ export default {
       const calendar = target.searchParams.get("calendar") || target.searchParams.get("dioecesis");
       target.searchParams.set("dioecesis", normalizeCalendar(calendar));
       target.searchParams.delete("calendar");
+      target.searchParams.set("lang1", normalizeLanguage(target.searchParams.get("lang1"), "Latin"));
+      target.searchParams.set("lang2", normalizeLanguage(target.searchParams.get("lang2"), "English"));
+      if (route.startsWith("/v1/mass/")) {
+        target.searchParams.set("votive", normalizeVotive(target.searchParams.get("votive")));
+        const propers = ["1", "true", "yes"].includes(
+          (target.searchParams.get("propers") || "").toLowerCase(),
+        );
+        target.searchParams.set("propers", propers ? "1" : "0");
+      }
       return getContainer(env.Engine, "engine").fetch(
         new Request(target.toString(), { method: request.method, headers: request.headers }),
       );

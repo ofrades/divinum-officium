@@ -34,6 +34,11 @@ export default Alchemy.Stack(
       name: "omarchy divinum officium",
     });
 
+    const apiRateLimit = Cloudflare.RateLimit("ApiRateLimit", {
+      namespaceId: "divinum-officium-api",
+      simple: { limit: 60, period: 60 },
+    });
+
     // Service Auth: service tokens only, no identity provider, no login page.
     const policy = yield* Cloudflare.Access.Policy("ServiceAuth", {
       name: "service token only",
@@ -64,7 +69,7 @@ export default Alchemy.Stack(
     const api = yield* Cloudflare.Worker("Api", {
       main: "./src/worker.ts",
       workersDev: true,
-      env: { Engine: engine },
+      env: { Engine: engine, API_RATE_LIMIT: apiRateLimit },
       ...(requireAuth
         ? {
             access: {

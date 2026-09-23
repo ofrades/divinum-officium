@@ -123,3 +123,20 @@ export function normalizeCalendar(requested: string | null): string {
   const loose = CALENDARS.find((calendar) => calendar.value.toLowerCase() === wanted.toLowerCase());
   return loose?.value ?? CALENDARS[0].value;
 }
+
+export function normalizeLanguage(requested: string | null, fallback = "English"): string {
+  const wanted = (requested ?? "").trim();
+  const exact = LANGUAGES.find((language) => language.value === wanted);
+  if (exact) return exact.value;
+  const loose = LANGUAGES.find((language) => language.value.toLowerCase() === wanted.toLowerCase());
+  if (loose) return loose.value;
+  return LANGUAGES.some((language) => language.value === fallback) ? fallback : LANGUAGES[0].value;
+}
+
+export function normalizeVotive(requested: string | null): string {
+  const wanted = (requested ?? "").trim();
+  const exact = VOTIVES.find((votive) => votive.value === wanted);
+  if (exact) return exact.value;
+  const loose = VOTIVES.find((votive) => votive.value.toLowerCase() === wanted.toLowerCase());
+  return loose?.value ?? VOTIVES[0].value;
+}

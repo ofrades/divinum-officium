@@ -32,7 +32,8 @@ export const SITE_HTML = `<!doctype html>
               gap: .7rem; margin: 1.1rem 0 1.3rem; }
   .control { display: flex; flex-direction: column; gap: .25rem; color: var(--dim); font-size: .78rem; }
   select { width: 100%; min-width: 0; padding: .35rem .45rem; color: var(--ink);
-           background: transparent; border: 1px solid var(--line); border-radius: .35rem; }
+           background: var(--paper); border: 1px solid var(--line); border-radius: .35rem; }
+  select option, select optgroup { color: var(--ink); background: var(--paper); }
   .mass-controls { display: contents; }
   .mass-form { display: flex; gap: .3rem; align-items: end; }
   .mass-form button { flex: 1; }

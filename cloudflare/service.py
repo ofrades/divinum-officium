@@ -262,15 +262,24 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args) -> None:
         sys.stderr.write("%s %s\n" % (self.address_string(), format % args))
 
-    def send_json(self, status: int, body: dict) -> None:
+    def send_json(self, status: int, body: dict, cache_control: str | None = None) -> None:
         encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(encoded)))
-        # The engine is the source of truth and it is cheap; a short shared
-        # cache absorbs repeated asks for the same hour without pretending the
-        # answer is static.
-        self.send_header("Cache-Control", "public, max-age=300")
+        # Successful liturgy responses are safe to share for a short period;
+        # never cache failures, which would turn a transient engine error into
+        # a client-visible outage for the whole TTL.
+        self.send_header(
+            "Cache-Control",
+            cache_control
+            or (
+                "public, max-age=300, s-maxage=300, stale-while-revalidate=60"
+                if 200 <= status < 300
+                else "no-store"
+            ),
+        )
+        self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(encoded)
 
@@ -315,6 +324,7 @@ class Handler(BaseHTTPRequestHandler):
                     "hours": HOURS,
                     "calendars": list(CALENDARS),
                 },
+                cache_control="no-store",
             )
             return
 

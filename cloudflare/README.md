@@ -60,6 +60,11 @@ The reader at `/` exposes the same choices as the plugin: Missa or Officium,
 canonical hour, rubrics, local calendar, two languages, votive Mass, and
 Propers versus Full Mass.
 
+Successful API responses are edge/browser-cacheable for five minutes with
+stale-while-revalidate; failures are never cached. `/v1/*` is limited to 60
+requests per minute per source IP, and selector inputs are canonicalized before
+they reach the engine.
+
 ## Build and deploy
 
 ```bash
