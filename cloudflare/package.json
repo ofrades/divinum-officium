@@ -5,7 +5,6 @@
   "scripts": {
     "check": "tsc --noEmit",
     "image": "docker build -f Dockerfile -t divinum-officium-api ..",
-    "snapshot": "python3 tests/snapshot.py",
     "dev": "alchemy dev",
     "deploy": "alchemy deploy --yes",
     "deploy:prod": "alchemy deploy --stage prod --yes",

@@ -78,40 +78,17 @@ is enough.
   redacts the secret in its log but keeps it in the state store:
   `bunx alchemy state read DivinumOfficiumApi/live_ofrades/PluginToken`.
 
-## Tests
-
-The engine's output *is* the API's contract, so the tests pin it. They run the
-same `Engine.office` / `Engine.mass` calls the routes use — no parallel path into
-the engine — and they run inside the same pinned image the API answers with.
-
-```bash
-python3 tests/snapshot.py                  # 33 fixtures, ~4 seconds
-python3 tests/snapshot.py --update         # re-record, on purpose
-python3 tests/snapshot.py --sweep 2026 Laudes        # a year, one digest per day
-python3 tests/snapshot.py --sweep 2026 Laudes --update
-```
-
-- `tests/snapshots/` — small digest files per request: title, colour, and one
-  hash per section column. A failing run names the section that moved and how
-  many lines it went from and to, without carrying the texts around.
-- `tests/baselines/` — a whole year at one digest per day: the alarm for a text
-  or engine change arriving from upstream.
-- `.github/workflows/divinum-api.yml` runs both on pushes to this branch, and a
-  second job asks **upstream's** checkout the same questions, so drift is visible
-  here before a reader sees it.
-
-The fixtures cover the year's sharp edges (the Christmas octave, Ash Wednesday,
-Easter, the Ember days, All Souls, Christmas), every kind of hour (Matins to
-Compline), the Mass, a second language, and an older version — the places where
-the engine's fallbacks and version guards do their work.
-
 ## Updating the engine or the texts
 
 - Texts and engine code live in `web/`, so syncing this branch is enough: the
-  image is rebuilt on deploy, and the snapshot suite tells you what moved.
-  Re-record deliberately (`--update`) when the change is wanted.
-- The base image digest appears in `Dockerfile` and in the workflow; bump both
-  together.
+  image is rebuilt on deploy and the engine answers with whatever is there. No
+  digest of ours records what a day says — the engine, and only the engine,
+  decides.
+- Wanted a second opinion on what a change did? `tools/generate_slice.py` writes
+  the reader's own JSON for a range of dates, office or Mass, against a local
+  checkout or a running server — useful to diff a day before and after a sync.
+- The base image digest appears in `Dockerfile`; bump it there when the engine
+  image moves.
 
 ## Housekeeping
 
