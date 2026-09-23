@@ -1,6 +1,8 @@
 import type { DaySelection } from "./artifact";
 import { seasonFromDayKey, type ConditionContext } from "./conditional";
-import { parseScript, scriptSections, type TextSource } from "./script";
+import { renderBody, renderLine, type RenderContext } from "./render";
+import { parseScript, scriptBlocks, scriptSections, type ScriptBlock, type TextSource } from "./script";
+import { resolveSection } from "./texts";
 
 // Assembling an hour: the day's identity comes from the calendar artifact, the
 // shape of the hour comes from its Ordinarium script, and the texts come from
@@ -88,6 +90,39 @@ const COLOUR_NAMES: Record<string, string> = {
 
 export const SUPPORTED_HOURS = ["Prima", "Laudes", "Vesperae", "Completorium"] as const;
 
+/** The day's own file, as the engine reads it (per language). */
+function dayFileFor(language: string, winner: string): string | undefined {
+  return winner === "" ? undefined : `horas/${language}/${winner}`;
+}
+
+async function resolveBlock(
+  block: ScriptBlock,
+  language: string,
+  request: AssembleRequest,
+  context: ConditionContext,
+  renderContext: RenderContext,
+): Promise<OfficeLine[]> {
+  const lines: OfficeLine[] = [];
+  for (const item of block.items) {
+    if (item.kind === "ref") {
+      const body = await resolveSection({
+        name: item.value,
+        lang: language,
+        dayFile: dayFileFor(language, request.selection.winner),
+        source: request.source,
+        context,
+      });
+      if (body) lines.push(...renderBody(body, renderContext, /^alleluia/i.test(item.value)));
+      continue;
+    }
+    if (item.kind === "text") {
+      const rendered = renderLine(item.value, renderContext);
+      if (rendered) lines.push(rendered);
+    }
+  }
+  return lines;
+}
+
 function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -134,18 +169,31 @@ export async function assembleOffice(request: AssembleRequest): Promise<OfficePa
     .map((section) => section.label);
 
   notes.push(
-    `frame only: ${labels.length} sections from the Ordinarium; references, psalmody and commemorations still to come`,
+    `${labels.length} sections from the Ordinarium; only the Incipit carries text so far`,
   );
   if (selection.headline === "" && selection.titles.length === 0) {
     notes.push("the calendar artifact has no headline for this day");
   }
 
-  const sections: OfficeSection[] = labels.map((label) => ({
-    columns: [
-      { label, note: "", lines: [] },
-      { label: "", note: "", lines: [] },
-    ],
-  }));
+  // Only the first block is resolved so far: it is where the references are
+  // fewest and the pipeline (lookup → notation → classification) is exercised
+  // end to end. The rest follow as each lookup they need is ported.
+  const blocks = scriptBlocks(items).filter((block) => labels.includes(block.label));
+  const renderContext: RenderContext = { version };
+  const languages = [request.lang1, request.lang2];
+
+  const sections: OfficeSection[] = [];
+  for (const [index, block] of blocks.entries()) {
+    const columns: OfficeColumn[] = [];
+    for (const language of languages) {
+      const lines =
+        index === 0
+          ? await resolveBlock(block, language, request, context, renderContext)
+          : [];
+      columns.push({ label: language === request.lang1 ? block.label : "", note: "", lines });
+    }
+    sections.push({ columns });
+  }
 
   return {
     ok: true,

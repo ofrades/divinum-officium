@@ -108,6 +108,29 @@ export function parseScript(script: string, context: ConditionContext): ScriptIt
  * engine prints nothing — no label, no empty block. That is why this looks at
  * what a section actually holds rather than at its markers.
  */
+export interface ScriptBlock {
+  label: string;
+  hasContent: boolean;
+  items: ScriptItem[];
+}
+
+/** The script's blocks: a section marker with the items that follow it. */
+export function scriptBlocks(items: ScriptItem[]): ScriptBlock[] {
+  const blocks: ScriptBlock[] = [];
+  let current: ScriptBlock | null = null;
+  for (const item of items) {
+    if (item.kind === "section") {
+      current = { label: item.value, hasContent: false, items: [] };
+      blocks.push(current);
+      continue;
+    }
+    if (!current) continue;
+    current.items.push(item);
+    if (item.kind === "ref" || item.kind === "text" || item.kind === "rubricNote") current.hasContent = true;
+  }
+  return blocks;
+}
+
 export interface ScriptSection {
   label: string;
   /** Whether anything in the script fills this section. */
