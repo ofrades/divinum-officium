@@ -1,5 +1,28 @@
 # A private API for the engine
 
+> **Status.** The container stack below (`alchemy.run.ts` + `worker.ts`) was the
+> first attempt: it runs the real Perl engine in a Cloudflare Container, and it
+> is blocked only on getting the engine image into Cloudflare's registry (needs
+> Docker locally, or CI, or a daemonless copy).
+>
+> The direction now is a **Worker with the repository's texts as static assets**
+> — no container, no Docker, free plan. `tools/` holds that pipeline:
+>
+> - `sync_assets.py` — collects the texts the API serves into one asset
+>   directory: 11,138 files, 22.5 MB for office + Mass in Latin, Português and
+>   English (inside the free plan's 20,000 files / 25 MiB each).
+> - `build_calendar.py` — asks the engine itself, at deploy time, which office
+>   wins each date (`precedence()`, patched into a *copy* of the engine), and
+>   writes only the selection: winning file, commemorations, rank, rule,
+>   vesper index. 365 days = 136 KB. The texts are **not** in the artifact;
+>   they are assembled per request from the repository's files.
+> - `generate_slice.py` + `divinum_officium.py` — vendored from the Omarchy
+>   reader; walks the engine and writes the golden corpus the TypeScript port
+>   is measured against (2026, Rubrics 1960, Latin + Português, office + Mass:
+>   3,285 payloads in 67 seconds).
+>
+> The Worker and the TypeScript assembler are the next piece.
+
 The website and the Omarchy plugin both read the engine over HTTP. This
 directory turns the engine into an API of your own: the Perl server runs in a
 Cloudflare Container built from this project's own published image, behind a

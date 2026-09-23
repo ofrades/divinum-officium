@@ -1,2 +1,4 @@
 node_modules/
 .alchemy/
+.assets/
+tests/golden/
